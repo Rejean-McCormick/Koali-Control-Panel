@@ -1,0 +1,239 @@
+{
+  "schema_version": 3,
+  "app": {
+    "terminal_exe": "wt.exe",
+    "editor_exe": "code",
+    "command_timeout_seconds": 1800,
+    "open_shell_on_start": true
+  },
+  "environment": {
+    "default_backend": "wsl",
+    "default_workspace": "koa-linux-main",
+    "prepare": {
+      "auto_create_workspace": true,
+      "run_repository_setup": true,
+      "auto_refresh_workspace_from_windows": true
+    }
+  },
+  "backends": {
+    "wsl": {
+      "distribution": "Ubuntu-24.04",
+      "expected_wsl_version": 2,
+      "expected_distribution_id": "ubuntu",
+      "expected_release": "24.04",
+      "require_systemd": true,
+      "required_systemd_units": [],
+      "ignored_systemd_units": [
+        "console-getty.service",
+        "getty@tty1.service"
+      ],
+      "shell": "bash",
+      "toolchain_provisioning": {
+        "enabled": true,
+        "provider": "ubuntu_apt_pipx",
+        "apt_packages": [
+          "git",
+          "python3",
+          "python-is-python3",
+          "pipx"
+        ],
+        "uv_pipx_package": "uv",
+        "rustup_apt_package": "rustup",
+        "native_build_apt_packages": [
+          "build-essential"
+        ],
+        "prime_cargo_cache": true
+      }
+    },
+    "native_linux": {
+      "enabled": true,
+      "shell": "bash"
+    },
+    "windows": {
+      "enabled": true,
+      "shell": "powershell.exe"
+    }
+  },
+  "workspaces": {
+    "koa-linux-main": {
+      "repository": "koa-linux",
+      "backend": "wsl",
+      "profile": "developer-windows-wsl",
+      "root": "{home}/work/koa-linux",
+      "windows_source": "C:\\mycode\\kOA-Linux\\koa-linux",
+      "checkout_ref": "current",
+      "bootstrap_on_start": false,
+      "assembly": {
+        "renderer": "systemd",
+        "overlays": [],
+        "output": "generated/koali/developer-windows-wsl-systemd"
+      },
+      "services": {
+        "mode": "disabled",
+        "engine": "docker",
+        "compose_file": "dev/local-services/compose.yaml",
+        "compose_profile": "local-services",
+        "environment": {}
+      }
+    }
+  },
+  "diagnostics": {
+    "levelupdiag": {
+      "enabled": true,
+      "root": "C:\\mycode\\kOA-Linux\\LevelUpDiag-Koali",
+      "campaigns": {
+        "stabilization": "stabilization",
+        "stabilization_runtime": "stabilization-runtime",
+        "developer": "debug",
+        "build": "stabilization",
+        "run_all": "validation",
+        "release": "release",
+        "delivery": "delivery"
+      }
+    },
+    "debug": {
+      "enabled": true,
+      "architecture_formalities": "warn",
+      "description": "Read-only local pipeline diagnosis; final-profile subsystem blockers remain visible but do not define Koali core stabilization readiness."
+    }
+  },
+  "build": {
+    "image": {
+      "enabled": false,
+      "args": [],
+      "custom_command": ""
+    },
+    "full_cycle_requires_image": false
+  },
+  "system_test": {
+    "qemu": {
+      "image": "",
+      "image_format": "raw",
+      "network": "off",
+      "expected_release_identity": "",
+      "session_ready_regex": "",
+      "compositor_ready_regex": "",
+      "confinement_ready_regex": "",
+      "general_surface_denied_regex": "",
+      "privilege_path_denied_regex": "",
+      "active_profile": "",
+      "navigation_surface_id": "",
+      "navigation_ready_regex": "",
+      "navigation_result_regex": "",
+      "navigation_keys": "",
+      "mediatheque_selection": "",
+      "active_release_set": "",
+      "mediatheque_artifact_ref": "",
+      "mediatheque_offline_regex": "",
+      "semantik_selection": "selected",
+      "semantik_ready_regex": "",
+      "provisioning": {
+        "enabled": true,
+        "provider": "ubuntu_apt",
+        "apt_packages": [
+          "qemu-system-x86",
+          "qemu-utils",
+          "ovmf"
+        ]
+      }
+    }
+  },
+  "workflow": {
+    "phase": "core_stabilization",
+    "qualification_scope": "koali_core_pre_subsystem",
+    "final_profile": "sovereign-linux-node",
+    "external_subsystems": {
+      "konnaxion": "placeholder_until_integration",
+      "ariane": "deferred_until_koali_integration_test",
+      "orgo": "draft_not_admitted",
+      "semantik_architect": "deferred_not_admitted"
+    },
+    "policy": "stabilize Koali environment and native core before subsystem integration; never fabricate source admission"
+  },
+  "products": {
+    "konnaxion": {
+      "label": "Konnaxion",
+      "enabled": true,
+      "optional": false,
+      "backend": "windows",
+      "roots": [
+        "C:\\mycode\\Konnaxion\\Konnaxion",
+        "C:\\mycode\\kOA-Linux\\Konnaxion"
+      ],
+      "marker": "package.json",
+      "commands": {},
+      "environment": {
+        "PORT": "4300"
+      },
+      "open_url": "http://127.0.0.1:4300/",
+      "health_url": "http://127.0.0.1:4300/"
+    },
+    "koali-spaces": {
+      "label": "Koali Spaces",
+      "enabled": true,
+      "optional": false,
+      "backend": "windows",
+      "roots": [
+        "C:\\mycode\\kOA-Linux\\koali-spaces"
+      ],
+      "marker": "package.json",
+      "commands": {
+        "validate": "pnpm run validate",
+        "build": "pnpm run build",
+        "smoke": "pnpm run smoke:runtime",
+        "start": "pnpm run dev"
+      },
+      "environment": {
+        "KOALI_SPACES_PORT": "4173",
+        "KOALI_SPACES_FRAME_SRC": "http://127.0.0.1:4300"
+      },
+      "open_url": "http://127.0.0.1:4173/",
+      "health_url": "http://127.0.0.1:4173/health"
+    },
+    "orgo": {
+      "label": "Orgo",
+      "enabled": false,
+      "optional": true,
+      "backend": "wsl",
+      "roots": [],
+      "marker": "package.json",
+      "commands": {},
+      "environment": {},
+      "open_url": "",
+      "health_url": ""
+    }
+  },
+  "dev_stack": {
+    "products": [
+      "konnaxion",
+      "koali-spaces"
+    ],
+    "default_product_actions": [
+      "validate",
+      "build"
+    ],
+    "product_actions": {
+      "konnaxion": [
+        "validate",
+        "test",
+        "build"
+      ],
+      "koali-spaces": [
+        "validate",
+        "build",
+        "smoke"
+      ]
+    },
+    "gates": [
+      {
+        "id": "konnaxion-koali-adapter",
+        "label": "Koali ↔ Konnaxion adapter",
+        "workspace": "koa-linux-main",
+        "command": "uv run --frozen pytest -q integrations/konnaxion/tests",
+        "enabled": true
+      }
+    ],
+    "startup_timeout_seconds": 45,
+    "command_timeout_seconds": 1800
+  }
+}
