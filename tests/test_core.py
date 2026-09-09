@@ -34,11 +34,11 @@ class CoreTests(unittest.TestCase):
         self.assertIn("koa-linux-main", new["workspaces"])
         self.assertEqual(new["workspaces"]["koa-linux-main"]["root"], "/mnt/c/repo")
 
-    def test_config_store_writes_schema_v3(self) -> None:
+    def test_config_store_writes_schema_v4(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             path = Path(td) / "cfg.json"
             cfg = ConfigStore(path).load()
-            self.assertEqual(cfg["schema_version"], 3)
+            self.assertEqual(cfg["schema_version"], 4)
             self.assertTrue(path.exists())
             loaded = json.loads(path.read_text())
             self.assertEqual(loaded["environment"]["default_workspace"], "koa-linux-main")

@@ -1,8 +1,8 @@
-# Koali Control Panel 3.0.0
+# Koali Control Panel 4.0.0
 
-Koali Control Panel 3.0.0 keeps **Koali core/environment stabilization** as the qualification base and adds a declarative product/dev-stack orchestrator. The canonical final target remains `sovereign-linux-node`; product runtimes stay autonomous, removable, and independently runnable. The Control Panel never fabricates subsystem source admission.
+Koali Control Panel 4.0.0 keeps the existing development orchestration while introducing the final-target **Koali Spaces integration boundary**. Product runtimes remain autonomous, removable, and independently runnable. The Control Panel may start, validate and observe products, but Koali owns Space composition, activation semantics, manifests, ACP interpretation and receipts.
 
-## 3.0 development orchestration
+## Development orchestration
 
 ```text
 BRING KOALI TO READY
@@ -20,12 +20,12 @@ The UI is not the orchestration engine. Long-running runtimes are owned by `Proc
 
 Default development endpoints are `Konnaxion -> 127.0.0.1:4300` and `Koali Spaces -> 127.0.0.1:4173`. Product roots and commands remain editable in `koali-control.json`. Konnaxion commands are auto-discovered from its `package.json` when not explicitly configured.
 
-## Current phase
+## Current focus
 
 ```text
-phase               core_stabilization
-qualification scope koali_core_pre_subsystem
-final profile        sovereign-linux-node
+current focus        core_stabilization
+qualification scope  koali_core_pre_subsystem
+final profile         sovereign-linux-node
 
 Konnaxion            placeholder_until_integration
 Ariane               deferred_until_koali_integration_test
@@ -136,7 +136,7 @@ build.image
 system_test.qemu
 ```
 
-`products` is the modular registry. A product declares roots, backend, commands/environment, health URL, and browser URL. `dev_stack` declares composition order, one-shot preparation actions, integration gates, and startup timeout. Removing or disabling a product does not require changing Control Panel Python code.
+`products` is the modular registry. A product declares roots, backend, commands/environment, health/browser URLs, and may declare multiple persistent `services` that are supervised under one product identity. `dev_stack` declares composition order, one-shot preparation actions, integration gates, and startup timeout. Removing or disabling a product does not require changing Control Panel Python code.
 
 ## Self-test
 
@@ -145,6 +145,66 @@ python .\koali-control.pyw --self-test
 ```
 
 The self-test verifies Control Panel configuration/model construction. It does not claim that the external kOA workspace or final target is qualified.
+
+## Version 4.0.0 — Koali Spaces authority boundary
+
+4.0.0 introduces a generic strangler boundary between development orchestration and Koali-owned Space semantics:
+
+- configuration schema is `4`;
+- `workflow.current_focus` replaces sequential `workflow.phase` terminology;
+- `DevStackOrchestrator` depends on `KoaliSpacesIntegrationController`, not on the Konnaxion-specific pilot writer;
+- `delegated` mode invokes repository-owned Koali product actions and verifies only public acceptance criteria;
+- delegated activation fails closed when the Koali action is absent — Control Panel never falls back to fabricating a Space;
+- verification is declarative and same-origin: required module IDs/routes live in configuration, not product branches in Python;
+- `legacy_projection` is an explicit compatibility mode preserving the current Home+Konnaxion development pilot until the paired Koali Spaces repository exposes `SpaceActivationCompiler`/stable activation invocation;
+- schema-3 `koali_spaces_pilot` settings migrate losslessly into the explicit legacy subsection;
+- integration release/deactivation runs before managed products stop so a future Koali control endpoint remains available during shutdown.
+
+### Final-target configuration
+
+```json
+{
+  "dev_stack": {
+    "koali_spaces_integration": {
+      "enabled": true,
+      "mode": "delegated",
+      "product_id": "koali-spaces",
+      "actions": {
+        "activate": "<Koali-owned product action>",
+        "deactivate": "<Koali-owned product action>"
+      },
+      "verify": {
+        "modules": [
+          {"module_id": "konnaxion", "required": true, "route": "/apps/konnaxion"}
+        ]
+      }
+    }
+  }
+}
+```
+
+The action names are Control Panel orchestration configuration only. Their semantics and implementation must live in Koali Spaces.
+
+## Version 3.0.6
+
+3.0.6 completes the Konnaxion qualification and runtime-start fixes discovered by real Control Panel runs:
+
+- retains `pytest --create-db` so the isolated Django test database is recreated with current migrations;
+- runs the Konnaxion frontend Jest suite as `pnpm exec cross-env FORCE_COLOR=1 jest --runInBand`;
+- starts Next.js directly as `pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 4300`, avoiding the pnpm `--` separator that Next 15 interpreted as a project directory;
+- probes the actual public root route for Konnaxion Web readiness because `app/_api` is a private Next.js folder and does not publish a health route;
+- automatically upgrades the canonical 3.0.1/3.0.2/3.0.3 Konnaxion commands and readiness URL while leaving custom commands untouched.
+
+## Version 3.0.1
+
+3.0.1 binds the orchestrator to the actual Konnaxion repository layout and adds composite-product supervision:
+
+- Konnaxion remains one product in the UI but starts two supervised services: Django API on `127.0.0.1:8000` and Next.js Web on `127.0.0.1:4300`;
+- `BRING KOALI TO READY` now prepares the Konnaxion frontend/backend, applies Django migrations, runs backend checks, backend tests, frontend tests/typecheck, and the frontend build before startup;
+- Koali Spaces continues to use `127.0.0.1:4173` and frames Konnaxion at `http://127.0.0.1:4300`;
+- the Konnaxion Capsule Manager is registered as an optional composite product with Agent `:8765` and Manager UI `:8714`; it is visible/manageable but intentionally excluded from the normal Koali dev stack;
+- composite health and runtime status are aggregated under the parent product instead of exposing implementation services as separate products;
+- STOP for a composite product terminates only the service processes owned by this Control Panel.
 
 ## Version 3.0.0
 
@@ -165,7 +225,7 @@ The self-test verifies Control Panel configuration/model construction. It does n
 
 ## Version 2.5.0
 
-2.5.0 introduces the pre-subsystem core-stabilization phase as a first-class UI/workflow boundary:
+2.5.0 historically introduced a pre-subsystem core-stabilization workflow boundary (4.0.0 replaces sequential phase terminology with `current_focus`):
 
 - adds explicit core stabilization and core-runtime LevelUpDiag campaign roles;
 - makes **STABILIZE KOALI CORE** the primary environment progression path;
@@ -295,3 +355,15 @@ The operating rule is: **if a formality does not materially prevent observing or
 - N10 is no longer blocked by unrelated N09 navigation context;
 - QEMU package provisioning output is quieter;
 - no LevelUpDiag level/campaign semantics moved into Koali Control Panel.
+
+## Koali Spaces integration strangler
+
+The current paired Koali Spaces snapshot does not yet expose the final Koali-owned `SpaceActivationCompiler` invocation surface on Windows. For continuity, configuration therefore defaults explicitly to `mode: "legacy_projection"`. Only that compatibility mode uses `koali_control/spaces_pilot.py` to materialize the historical Home+Konnaxion development projection.
+
+This path is intentionally isolated behind `KoaliSpacesIntegrationController`. New orchestration code must not add product-specific manifest builders to it. When Koali exposes the canonical activation action and Konnaxion owns its real manifest/ACP package, switch configuration to `delegated`; the legacy writer can then be deleted without changing `DevStackOrchestrator`.
+
+`delegated` mode never writes `active-state.json` or `surface-runtime.json` itself. It invokes Koali and verifies `/api/shell-state` plus configured same-origin module routes.
+
+### Koali Spaces runtime mode
+
+After `validate`, `build`, and `smoke:runtime`, the dev stack launches Koali Spaces with `pnpm run start` from the packaged `dist/runtime` artifact. This preserves the production-strict CSP while Konnaxion may continue to run in hot-reload development mode. The browser shell must hydrate and then consume `/api/shell-state` before the stack is considered visually usable.

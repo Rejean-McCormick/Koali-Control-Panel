@@ -9,6 +9,7 @@ from .models import Workspace
 from .orchestration import Orchestrator
 from .products import ProductRegistry
 from .supervisor import ProcessSupervisor
+from .spaces_integration import KoaliSpacesIntegrationController
 from .workspaces import WorkspaceManager
 
 
@@ -38,10 +39,12 @@ class DevStackOrchestrator:
         self.products = products
         self.supervisor = supervisor
         self.log = log
+        self.spaces_integration = KoaliSpacesIntegrationController(config, products, log)
 
     def reload(self, config: dict) -> None:
         self.config = config
         self.products.reload(config)
+        self.spaces_integration.reload(config)
 
     def cfg(self) -> dict:
         value = self.config.get("dev_stack", {})
@@ -132,20 +135,20 @@ class DevStackOrchestrator:
         while pending and time.monotonic() < deadline:
             for product_id in list(pending):
                 spec = self.products.get(product_id)
-                proc_state = self.supervisor.snapshot(product_id).state
-                if proc_state == "FAILED":
+                runtime_state = self.products.runtime_state(spec)
+                if runtime_state == "FAILED":
                     self.log(f"{spec.label}: process failed during startup")
                     return False
-                # A product may already be running outside this Control Panel.
-                # ProductRegistry.start() deliberately reuses such a runtime; health
-                # therefore remains authoritative even when the supervisor owns no PID.
-                if not (spec.health_url or spec.open_url):
-                    if proc_state == "RUNNING":
+                # Composite products can own multiple supervised processes, so the
+                # product registry is authoritative for aggregate runtime state.
+                has_health = bool(spec.health_url or spec.open_url or getattr(spec, "services", ()))
+                if not has_health:
+                    if runtime_state == "RUNNING":
                         pending.remove(product_id)
                     continue
                 health, detail = self.products.health(spec)
                 if health == "READY":
-                    ownership = "managed" if proc_state == "RUNNING" else "external"
+                    ownership = "managed" if runtime_state == "RUNNING" else "external"
                     self.log(f"{spec.label}: READY ({detail}; {ownership})")
                     pending.remove(product_id)
             if pending:
@@ -163,6 +166,8 @@ class DevStackOrchestrator:
             return DevStackResult(False, "gates")
         if prepare_products and not self.prepare_products():
             return DevStackResult(False, "products")
+        if not self.spaces_integration.before_start():
+            return DevStackResult(False, "koali-integration-prepare")
         started: list[str] = []
         for product_id in self.configured_products():
             spec = self.products.get(product_id)
@@ -176,16 +181,25 @@ class DevStackOrchestrator:
                 if spec.optional:
                     self.log(f"{spec.label}: optional product could not start; continuing")
                     continue
-                self.stop()
+                self.spaces_integration.mark_failed()
+                self.stop(clear_integration=False)
                 return DevStackResult(False, f"product:{product_id}:start")
             started.append(product_id)
         if not self._wait_ready(started):
+            self.spaces_integration.mark_failed()
             return DevStackResult(False, "health")
+        if not self.spaces_integration.after_ready():
+            return DevStackResult(False, "koali-integration")
         self.log("KOALI DEV STACK READY")
         return DevStackResult(True)
 
-    def stop(self) -> bool:
+    def stop(self, *, clear_integration: bool = True) -> bool:
         ok = True
+        # Release/deactivate Koali integration while its owner runtime may still
+        # be available. This keeps delegated control actions usable and remains
+        # harmless for legacy file-projection cleanup.
+        if clear_integration:
+            ok = self.spaces_integration.stop() and ok
         for product_id in reversed(self.configured_products()):
             ok = self.products.stop(product_id) and ok
         self.log("KOALI DEV STACK STOPPED" if ok else "KOALI DEV STACK stop completed with errors")

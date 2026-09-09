@@ -8,10 +8,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class StabilizationWorkflowTests(unittest.TestCase):
-    def test_default_workflow_is_core_stabilization(self):
+    def test_default_workflow_focus_is_core_stabilization(self):
         cfg = json.loads((ROOT / "koali-control.json").read_text(encoding="utf-8"))
         workflow = cfg["workflow"]
-        self.assertEqual(workflow["phase"], "core_stabilization")
+        self.assertEqual(workflow["current_focus"], "core_stabilization")
+        self.assertNotIn("phase", workflow)
         self.assertEqual(workflow["qualification_scope"], "koali_core_pre_subsystem")
         self.assertEqual(workflow["final_profile"], "sovereign-linux-node")
         self.assertEqual(workflow["external_subsystems"]["konnaxion"], "placeholder_until_integration")
@@ -20,9 +21,9 @@ class StabilizationWorkflowTests(unittest.TestCase):
         self.assertEqual(workflow["external_subsystems"]["semantik_architect"], "deferred_not_admitted")
 
 
-    def test_v3_dev_stack_keeps_products_modular(self):
+    def test_v4_dev_stack_keeps_products_modular(self):
         cfg = json.loads((ROOT / "koali-control.json").read_text(encoding="utf-8"))
-        self.assertEqual(cfg["schema_version"], 3)
+        self.assertEqual(cfg["schema_version"], 4)
         self.assertEqual(cfg["dev_stack"]["products"], ["konnaxion", "koali-spaces"])
         self.assertFalse(cfg["products"]["konnaxion"]["optional"])
         self.assertFalse(cfg["products"]["koali-spaces"]["optional"])

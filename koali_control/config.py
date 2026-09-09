@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 
@@ -74,7 +74,7 @@ QEMU_UI_FIELDS: tuple[tuple[str, str], ...] = (
 
 
 DEFAULT_CONFIG: dict[str, Any] = {
-    "schema_version": 3,
+    "schema_version": 4,
     "app": {
         "terminal_exe": "wt.exe",
         "editor_exe": "code",
@@ -163,7 +163,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
         }
     },
     "workflow": {
-        "phase": "core_stabilization",
+        "current_focus": "core_stabilization",
         "qualification_scope": "koali_core_pre_subsystem",
         "final_profile": "sovereign-linux-node",
         "external_subsystems": {
@@ -182,10 +182,44 @@ DEFAULT_CONFIG: dict[str, Any] = {
             "backend": "windows",
             "roots": [r"C:\mycode\Konnaxion\Konnaxion", r"C:\mycode\kOA-Linux\Konnaxion"],
             "marker": "package.json",
-            "commands": {},
-            "environment": {"PORT": "4300"},
+            "commands": {
+                "prepare": "if (-not (Get-Command pnpm -ErrorAction SilentlyContinue)) { corepack enable; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }; if (-not (Test-Path 'frontend\\node_modules')) { Push-Location 'frontend'; pnpm install; $rc=$LASTEXITCODE; Pop-Location; if ($rc -ne 0) { exit $rc } }; if (-not (Get-Command uv -ErrorAction SilentlyContinue)) { Write-Error 'uv is required on Windows for the Konnaxion backend'; exit 78 }; Push-Location 'backend'; if (-not (Test-Path '.venv\\Scripts\\python.exe')) { uv venv .venv --python 3.12; if ($LASTEXITCODE -ne 0) { Pop-Location; exit $LASTEXITCODE } }; uv pip install --python '.venv\\Scripts\\python.exe' -r 'requirements\\local.txt'; $rc=$LASTEXITCODE; Pop-Location; exit $rc",
+                "migrate": "Push-Location 'backend'; & '.\\.venv\\Scripts\\python.exe' manage.py migrate; $rc=$LASTEXITCODE; Pop-Location; exit $rc",
+                "validate": "Push-Location 'backend'; & '.\\.venv\\Scripts\\python.exe' manage.py check; $rc=$LASTEXITCODE; Pop-Location; if ($rc -ne 0) { exit $rc }; Push-Location 'frontend'; pnpm run typecheck; $rc=$LASTEXITCODE; Pop-Location; exit $rc",
+                "test": "Push-Location 'backend'; & '.\\.venv\\Scripts\\python.exe' -m pytest -q --create-db; $rc=$LASTEXITCODE; Pop-Location; if ($rc -ne 0) { exit $rc }; Push-Location 'frontend'; pnpm exec cross-env FORCE_COLOR=1 jest --runInBand; $rc=$LASTEXITCODE; Pop-Location; exit $rc",
+                "build": "Push-Location 'frontend'; pnpm run build; $rc=$LASTEXITCODE; Pop-Location; exit $rc"
+            },
+            "environment": {
+                "API_PROXY_BASE": "http://127.0.0.1:8000/api",
+                "NEXT_PUBLIC_API_BASE": "/api",
+                "PORT": "4300"
+            },
             "open_url": "http://127.0.0.1:4300/",
-            "health_url": "http://127.0.0.1:4300/",
+            "health_url": "",
+            "services": {
+                "api": {
+                    "label": "API",
+                    "backend": "windows",
+                    "root": "backend",
+                    "marker": "manage.py",
+                    "command": "& '.\\.venv\\Scripts\\python.exe' -m uvicorn config.asgi:application --host 127.0.0.1 --port 8000 --reload",
+                    "environment": {},
+                    "health_url": "http://127.0.0.1:8000/"
+                },
+                "web": {
+                    "label": "Web",
+                    "backend": "windows",
+                    "root": "frontend",
+                    "marker": "package.json",
+                    "command": "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 4300",
+                    "environment": {
+                        "API_PROXY_BASE": "http://127.0.0.1:8000/api",
+                        "NEXT_PUBLIC_API_BASE": "/api",
+                        "PORT": "4300"
+                    },
+                    "health_url": "http://127.0.0.1:4300/"
+                }
+            }
         },
         "koali-spaces": {
             "label": "Koali Spaces",
@@ -198,14 +232,58 @@ DEFAULT_CONFIG: dict[str, Any] = {
                 "validate": "pnpm run validate",
                 "build": "pnpm run build",
                 "smoke": "pnpm run smoke:runtime",
-                "start": "pnpm run dev",
+                "start": "pnpm run start"
             },
             "environment": {
                 "KOALI_SPACES_PORT": "4173",
                 "KOALI_SPACES_FRAME_SRC": "http://127.0.0.1:4300",
+                "KOALI_SPACES_STATE_ROOT": r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces",
+                "KOALI_SPACES_SURFACE_REGISTRY": r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces\surface-runtime.json"
             },
             "open_url": "http://127.0.0.1:4173/",
-            "health_url": "http://127.0.0.1:4173/health",
+            "health_url": "http://127.0.0.1:4173/health"
+        },
+        "konnaxion-capsule-manager": {
+            "label": "Konnaxion Capsule Manager",
+            "enabled": True,
+            "optional": True,
+            "backend": "windows",
+            "roots": [r"C:\mycode\Konnaxion\Konnaxion_Capsule_Manager"],
+            "marker": "pyproject.toml",
+            "commands": {
+                "validate": "uv run python -m compileall -q kx_shared kx_agent kx_manager kx_builder kx_cli",
+                "test": "uv run pytest -q"
+            },
+            "environment": {
+                "KX_ROOT": r"C:\mycode\Konnaxion\runtime",
+                "KX_SOURCE_DIR": r"C:\mycode\Konnaxion\Konnaxion",
+                "KX_AGENT_HOST": "127.0.0.1",
+                "KX_AGENT_PORT": "8765",
+                "KX_MANAGER_HOST": "127.0.0.1",
+                "KX_MANAGER_PORT": "8714"
+            },
+            "open_url": "http://127.0.0.1:8714/ui",
+            "health_url": "",
+            "services": {
+                "agent": {
+                    "label": "Agent",
+                    "backend": "windows",
+                    "root": ".",
+                    "marker": "pyproject.toml",
+                    "command": "uv run kx-agent run",
+                    "environment": {},
+                    "health_url": "http://127.0.0.1:8765/v1/health"
+                },
+                "manager": {
+                    "label": "Manager",
+                    "backend": "windows",
+                    "root": ".",
+                    "marker": "pyproject.toml",
+                    "command": "uv run kx-manager --host 127.0.0.1 --port 8714",
+                    "environment": {},
+                    "health_url": "http://127.0.0.1:8714/ui"
+                }
+            }
         },
         "orgo": {
             "label": "Orgo",
@@ -217,14 +295,14 @@ DEFAULT_CONFIG: dict[str, Any] = {
             "commands": {},
             "environment": {},
             "open_url": "",
-            "health_url": "",
-        },
+            "health_url": ""
+        }
     },
     "dev_stack": {
         "products": ["konnaxion", "koali-spaces"],
         "default_product_actions": ["validate", "build"],
         "product_actions": {
-            "konnaxion": ["validate", "test", "build"],
+            "konnaxion": ["prepare", "migrate", "validate", "test", "build"],
             "koali-spaces": ["validate", "build", "smoke"],
         },
         "gates": [
@@ -236,6 +314,28 @@ DEFAULT_CONFIG: dict[str, Any] = {
                 "enabled": True,
             }
         ],
+        "koali_spaces_integration": {
+            "enabled": True,
+            "mode": "legacy_projection",
+            "product_id": "koali-spaces",
+            "state_root": r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces",
+            "actions": {
+                "activate": "",
+                "deactivate": ""
+            },
+            "verify": {
+                "modules": [
+                    {
+                        "module_id": "konnaxion",
+                        "required": True,
+                        "route": "/apps/konnaxion"
+                    }
+                ]
+            },
+            "legacy_projection": {
+                "konnaxion_embed_base": "http://127.0.0.1:4300"
+            }
+        },
         "startup_timeout_seconds": 45,
         "command_timeout_seconds": 1800,
     },
@@ -366,7 +466,7 @@ def migrate_v1(data: dict[str, Any]) -> dict[str, Any]:
             }
         },
         "workflow": {
-            "phase": "core_stabilization",
+            "current_focus": "core_stabilization",
             "qualification_scope": "koali_core_pre_subsystem",
             "final_profile": "sovereign-linux-node",
             "external_subsystems": {
@@ -408,6 +508,149 @@ def normalize_levelupdiag_campaigns(config: dict[str, Any]) -> None:
     campaigns.setdefault("stabilization_runtime", "stabilization-runtime")
 
 
+def normalize_v4_workflow_focus(config: dict[str, Any]) -> None:
+    """Replace sequential phase terminology with a non-sequential current focus."""
+    workflow = config.setdefault("workflow", {})
+    if not isinstance(workflow, dict):
+        return
+    legacy_phase = workflow.pop("phase", None)
+    if legacy_phase and not workflow.get("current_focus"):
+        workflow["current_focus"] = legacy_phase
+    workflow.setdefault("current_focus", "core_stabilization")
+
+
+def normalize_v4_spaces_integration(config: dict[str, Any]) -> None:
+    """Move the v3 Koali/Konnaxion pilot behind the generic integration boundary.
+
+    The migration is lossless and intentionally keeps legacy projection mode
+    explicit until the paired Koali Spaces repository exposes its canonical
+    delegated activation action.
+    """
+    dev_stack = config.setdefault("dev_stack", {})
+    if not isinstance(dev_stack, dict):
+        return
+
+    old = dev_stack.pop("koali_spaces_pilot", None)
+    integration = dev_stack.setdefault("koali_spaces_integration", {})
+    if not isinstance(integration, dict):
+        integration = {}
+        dev_stack["koali_spaces_integration"] = integration
+
+    integration.setdefault("enabled", True)
+    integration.setdefault("mode", "legacy_projection")
+    integration.setdefault("product_id", "koali-spaces")
+    actions = integration.setdefault("actions", {})
+    if isinstance(actions, dict):
+        actions.setdefault("activate", "")
+        actions.setdefault("deactivate", "")
+    verify = integration.setdefault("verify", {})
+    if isinstance(verify, dict):
+        verify.setdefault(
+            "modules",
+            [{"module_id": "konnaxion", "required": True, "route": "/apps/konnaxion"}],
+        )
+    legacy = integration.setdefault("legacy_projection", {})
+    if not isinstance(legacy, dict):
+        legacy = {}
+        integration["legacy_projection"] = legacy
+
+    if isinstance(old, dict):
+        if "enabled" in old:
+            integration["enabled"] = bool(old["enabled"])
+        if old.get("state_root"):
+            integration["state_root"] = old["state_root"]
+        if old.get("konnaxion_embed_base"):
+            legacy["konnaxion_embed_base"] = old["konnaxion_embed_base"]
+        module_id = str(old.get("module_id", "")).strip()
+        if module_id and isinstance(verify, dict):
+            verify["modules"] = [{"module_id": module_id, "required": True, "route": f"/apps/{module_id}"}]
+
+    integration.setdefault("state_root", r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces")
+    legacy.setdefault("konnaxion_embed_base", "http://127.0.0.1:4300")
+
+
+def normalize_v3_product_orchestration(config: dict[str, Any]) -> None:
+    """Upgrade the 3.0.0 Konnaxion action list without clobbering custom workflows."""
+    actions = config.setdefault("dev_stack", {}).setdefault("product_actions", {})
+    legacy = ["validate", "test", "build"]
+    if actions.get("konnaxion") == legacy:
+        actions["konnaxion"] = ["prepare", "migrate", "validate", "test", "build"]
+
+    # 3.0.1 used the repository pytest default, which includes --reuse-db.
+    # A stale reused database can omit tables introduced by current migrations.
+    products = config.setdefault("products", {})
+    konnaxion = products.get("konnaxion")
+    if isinstance(konnaxion, dict):
+        commands = konnaxion.get("commands")
+        if isinstance(commands, dict):
+            current = str(commands.get("test", ""))
+            if "-m pytest -q;" in current and "--create-db" not in current:
+                current = current.replace("-m pytest -q;", "-m pytest -q --create-db;", 1)
+            # 3.0.2 forwarded Jest args through `pnpm run test -- ...`; with pnpm 10
+            # the separator reaches Jest and makes --runInBand a file-pattern argument.
+            if "pnpm run test -- --runInBand" in current:
+                current = current.replace(
+                    "pnpm run test -- --runInBand",
+                    "pnpm exec cross-env FORCE_COLOR=1 jest --runInBand",
+                    1,
+                )
+            commands["test"] = current
+
+        services = konnaxion.get("services")
+        if isinstance(services, dict):
+            web = services.get("web")
+            if isinstance(web, dict):
+                # 3.0.3 forwarded Next CLI options through `pnpm run dev -- ...`;
+                # the separator reaches Next 15 and makes --hostname a project path.
+                legacy_web = "pnpm run dev -- --hostname 127.0.0.1 --port 4300"
+                if str(web.get("command", "")) == legacy_web:
+                    web["command"] = "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 4300"
+                # Konnaxion has no public dedicated frontend health route in this snapshot;
+                # app/_api is a private Next.js folder, so readiness uses the real root route.
+                if str(web.get("health_url", "")) in {"", "http://127.0.0.1:4300/health", "http://127.0.0.1:4300/_api/health"}:
+                    web["health_url"] = "http://127.0.0.1:4300/"
+
+    integration = config.setdefault("dev_stack", {}).setdefault("koali_spaces_integration", {})
+    integration.setdefault("enabled", True)
+    integration.setdefault("mode", "legacy_projection")
+    integration.setdefault("product_id", "koali-spaces")
+    integration.setdefault("state_root", r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces")
+    actions_cfg = integration.setdefault("actions", {})
+    if isinstance(actions_cfg, dict):
+        actions_cfg.setdefault("activate", "")
+        actions_cfg.setdefault("deactivate", "")
+    verify_cfg = integration.setdefault("verify", {})
+    if isinstance(verify_cfg, dict):
+        verify_cfg.setdefault(
+            "modules",
+            [{"module_id": "konnaxion", "required": True, "route": "/apps/konnaxion"}],
+        )
+    legacy_cfg = integration.setdefault("legacy_projection", {})
+    if isinstance(legacy_cfg, dict):
+        legacy_cfg.setdefault("konnaxion_embed_base", "http://127.0.0.1:4300")
+
+    spaces = products.get("koali-spaces")
+    if isinstance(spaces, dict):
+        # 3.0.5 started Koali Spaces through the development presentation server.
+        # The shell CSP is production-strict and the browser can remain on SSR
+        # initial state if Next development hydration needs eval/refresh support.
+        # Since the dev stack already builds and smoke-validates dist/runtime, run
+        # that validated packaged runtime instead of weakening the CSP.
+        commands = spaces.setdefault("commands", {})
+        if isinstance(commands, dict) and str(commands.get("start", "")) == "pnpm run dev":
+            commands["start"] = "pnpm run start"
+
+        environment = spaces.setdefault("environment", {})
+        if isinstance(environment, dict):
+            state_root = str(integration.get("state_root", "")).strip()
+            if state_root:
+                environment["KOALI_SPACES_STATE_ROOT"] = state_root
+                environment["KOALI_SPACES_SURFACE_REGISTRY"] = (
+                    str(PureWindowsPath(state_root) / "surface-runtime.json")
+                    if len(state_root) >= 3 and state_root[1] == ":" and state_root[2] in "\\/"
+                    else str(Path(state_root) / "surface-runtime.json")
+                )
+
 
 class ConfigStore:
     def __init__(self, path: Path) -> None:
@@ -423,9 +666,12 @@ class ConfigStore:
             raise RuntimeError(f"Invalid Control Panel config {self.path}: {exc}") from exc
         migrated = migrate_v1(raw)
         merged = deep_merge(DEFAULT_CONFIG, migrated)
-        merged["schema_version"] = 3
+        merged["schema_version"] = 4
         normalize_levelupdiag_campaigns(merged)
-        if migrated != raw or merged != deep_merge(DEFAULT_CONFIG, raw):
+        normalize_v4_workflow_focus(merged)
+        normalize_v4_spaces_integration(merged)
+        normalize_v3_product_orchestration(merged)
+        if migrated != raw or merged != raw:
             self.save(merged)
         return merged
 

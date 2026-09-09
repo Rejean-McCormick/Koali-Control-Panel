@@ -152,8 +152,8 @@ class ControlApp(tk.Tk):
     def active_workspace(self) -> Workspace:
         return self.workspace_manager.get(self.active_workspace_id())
 
-    def workflow_phase(self) -> str:
-        return str(self.config_data.get("workflow", {}).get("phase", "core_stabilization"))
+    def workflow_focus(self) -> str:
+        return str(self.config_data.get("workflow", {}).get("current_focus", "core_stabilization"))
 
     def workflow_scope(self) -> str:
         return str(self.config_data.get("workflow", {}).get("qualification_scope", "koali_core_pre_subsystem"))
@@ -330,7 +330,7 @@ class ControlApp(tk.Tk):
         ttk.Label(f, text="Koali core stabilization", style="Section.TLabel").grid(row=0, column=0, columnspan=4, sticky="w")
         ttk.Label(
             f,
-            text="Primary phase: stabilize the Koali environment and native components before subsystem integration. Core checks do not require Konnaxion/Ariane/Orgo/Semantik Architect admission and never rewrite their source locks.",
+            text="Current focus: stabilize the Koali environment and native components while integration work proceeds independently. Core checks do not require Konnaxion/Ariane/Orgo/Semantik Architect admission and never rewrite their source locks.",
             wraplength=1100,
         ).grid(row=1, column=0, columnspan=4, sticky="w", pady=(2, 6))
         core_box = ttk.Frame(f); core_box.grid(row=2, column=0, columnspan=4, sticky="ew", pady=6)
@@ -583,7 +583,7 @@ class ControlApp(tk.Tk):
                 report = self.workspace_manager.preflight(ws)
                 self.last_preflight = report
                 checks = report.by_key()
-                self.events.put(("status", ("Phase", self.workflow_phase())))
+                self.events.put(("status", ("Focus", self.workflow_focus())))
                 self.events.put(("status", ("Environment", report.state.value)))
                 self.events.put(("status", ("Backend", f"{ws.backend}: {checks.get('distro', checks.get('backend')).detail if checks.get('distro', checks.get('backend')) else 'unknown'}")))
                 self.events.put(("status", ("Workspace", ws.workspace_id)))
@@ -660,7 +660,7 @@ class ControlApp(tk.Tk):
             if not root:
                 self.log(f"{spec.label}: NOT INSTALLED")
                 return
-            available = [action for action in ("validate", "test", "build", "smoke", "start") if self.products.command_for(spec, action, root)]
+            available = [action for action in ("prepare", "migrate", "validate", "test", "build", "smoke", "start") if self.products.command_for(spec, action, root)]
             health, detail = self.products.health(spec)
             self.log(f"{spec.label}: root={root}; actions={','.join(available) or 'none'}; health={health} ({detail})")
         self.async_action(f"Check {product_id}", work)
@@ -708,7 +708,7 @@ class ControlApp(tk.Tk):
 
     def _on_close(self) -> None:
         try:
-            self.supervisor.stop_all()
+            self.dev_stack.stop()
         finally:
             self.destroy()
 

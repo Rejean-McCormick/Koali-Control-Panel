@@ -1,4 +1,4 @@
-# Koali Development Environment Reference — Control Panel 3.0.0
+# Koali Development Environment Reference — Control Panel 4.0.0
 
 ## 1. Naming
 
@@ -34,9 +34,9 @@ Koali Control Panel
         └── kOA-Linux public validators/tests
 ```
 
-## 2.1. Current qualification phase
+## 2.1. Current qualification focus
 
-The primary development phase is `core_stabilization` with scope `koali_core_pre_subsystem`. The final canonical profile remains `sovereign-linux-node`, but its independent subsystem requirements are not prerequisites for the pre-subsystem stabilization campaign.
+The current non-sequential development focus is `core_stabilization` with scope `koali_core_pre_subsystem`. The final canonical profile remains `sovereign-linux-node`. The focus is descriptive workflow metadata, not a phase gate: integration, platform and product work may proceed whenever their actual dependencies are satisfied.
 
 ```text
 Konnaxion          placeholder until real integration
@@ -233,12 +233,36 @@ This writes only to the normal user Cargo cache. It does not edit the repository
 When the active workspace contains `rust-toolchain.toml`, `PREPARE DEVELOPMENT ENVIRONMENT` treats that file as the sole authority for the Rust channel, profile, and components. On Ubuntu WSL it provisions `rustup` when needed, installs the declared toolchain under the normal Linux user, verifies `rustc`, `cargo`, and declared components, and makes `~/.cargo/bin` available to subsequent graphical actions. This provisioning does not inspect or modify Git state.
 
 
-## Product and Dev Stack orchestration (3.0.0)
+## Product and Dev Stack orchestration (4.0.0)
 
-The kOA-Linux core remains prepared and qualified in WSL. Browser-facing products can be managed by a separate backend; the default v3 configuration runs Konnaxion and Koali Spaces with the native Windows Node/pnpm toolchain while preserving WSL for kOA-Linux.
+The kOA-Linux core remains prepared and qualified in WSL. Browser-facing products can be managed by a separate backend; the default schema-4 configuration runs Konnaxion and Koali Spaces with the native Windows Node/pnpm toolchain while preserving WSL for kOA-Linux.
 
-`products` is declarative. Each product supplies candidate roots, an installation marker, optional explicit commands, environment, health URL, and open URL. Common package scripts are auto-discovered when commands are omitted. `dev_stack` composes those products and defines integration gates and preparation actions.
+`products` is declarative. Each product supplies candidate roots, an installation marker, optional explicit commands, environment, health URL, and open URL. A product may also declare named persistent `services`; the Control Panel supervises those services independently while reporting one aggregate product state. Common package scripts are auto-discovered when commands are omitted. `dev_stack` composes those products and defines integration gates and preparation actions.
+
+The default Konnaxion product is composite: `api` runs Django/Uvicorn from `backend/` on port 8000 and `web` runs Next.js from `frontend/` on port 4300. The optional Konnaxion Capsule Manager is also composite: `agent` runs on 8765 and `manager` on 8714. Capsule Manager is not part of the normal Koali dev-stack product list.
 
 `BRING KOALI TO READY` is the high-level development workflow. It prepares the core, runs LevelUpDiag stabilization, runs the Koali/Konnaxion adapter gate, validates/builds the products, starts the managed runtimes, waits for health, and opens Koali. This workflow does not change source locks or claim final-profile admission.
 
 Long-running product processes are supervised independently of `ProcessRunner`, so a dev server does not block one-shot Control Panel commands. STOP DEV STACK terminates only processes owned by the panel; an already-running external server may be reused and is not killed by the panel.
+
+
+### Konnaxion test database freshness
+
+The Control Panel qualification gate invokes the Konnaxion backend tests with `pytest --create-db`. Konnaxion itself retains `--reuse-db` for normal developer loops, but integrated qualification must rebuild the isolated test database so current migrations are always materialized.
+
+The same qualification action invokes the frontend Jest suite directly as `pnpm exec cross-env FORCE_COLOR=1 jest --runInBand`. Do not insert a standalone `--` before `--runInBand`: Jest treats arguments after that separator as test-path patterns, which can produce a false `No tests found` result.
+
+## Koali Spaces integration authority (4.0.0)
+
+`KoaliSpacesIntegrationController` is the only Dev Stack boundary for Koali Space admission orchestration. It has two explicit modes:
+
+- `delegated` — final target. Control Panel invokes actions implemented by the Koali Spaces product and verifies public shell/module behavior. It does not compose manifests, ACPs, activation payloads, receipts or runtime policy.
+- `legacy_projection` — compatibility-only strangler path for the current paired snapshot. It preserves the historical Home+Konnaxion development projection until Koali exposes its canonical compiler/invocation surface.
+
+The legacy implementation remains isolated in `koali_control/spaces_pilot.py`. No new product integration may be added there. A second app must use owner-owned integration artifacts plus the Koali-owned generic path, not another `_product_manifest()` function.
+
+Verification configuration may name expected module IDs and same-origin routes. These are acceptance criteria only; health/readiness and menu visibility never grant authority.
+
+On shutdown, integration deactivation/release runs before managed product processes are stopped so delegated control actions may still reach Koali.
+
+Koali Spaces launch policy: after the source validation/build/smoke gates pass, Control Panel runs the packaged production presentation runtime (`pnpm run start`) rather than the Next development presentation server. This avoids weakening the shell CSP solely for development hydration.
