@@ -232,11 +232,12 @@ DEFAULT_CONFIG: dict[str, Any] = {
                 "validate": "pnpm run validate",
                 "build": "pnpm run build",
                 "smoke": "pnpm run smoke:runtime",
-                "start": "pnpm dev"
+                "start": "pnpm run start"
             },
             "environment": {
                 "KOALI_SPACES_PORT": "4173",
-                                "KOALI_SPACES_STATE_ROOT": r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces",
+                "KOALI_SPACES_FRAME_SRC": "http://127.0.0.1:4300",
+                "KOALI_SPACES_STATE_ROOT": r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces",
                 "KOALI_SPACES_SURFACE_REGISTRY": r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces\surface-runtime.json"
             },
             "open_url": "http://127.0.0.1:4173/",
@@ -298,9 +299,10 @@ DEFAULT_CONFIG: dict[str, Any] = {
         }
     },
     "dev_stack": {
-        "products": ["koali-spaces"],
+        "products": ["konnaxion", "koali-spaces"],
         "default_product_actions": ["validate", "build"],
         "product_actions": {
+            "konnaxion": ["prepare", "migrate", "validate", "test", "build"],
             "koali-spaces": ["validate", "build", "smoke"],
         },
         "gates": [
@@ -314,19 +316,20 @@ DEFAULT_CONFIG: dict[str, Any] = {
         ],
         "koali_spaces_integration": {
             "enabled": True,
-            "mode": "delegated",
+            "mode": "legacy_projection",
             "product_id": "koali-spaces",
             "state_root": r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces",
             "actions": {
-                "activate": "ecosystem:ready",
+                "activate": "",
                 "deactivate": ""
             },
             "verify": {
                 "modules": [
-                    {"module_id": "konnaxion", "required": True, "route": "/apps/konnaxion"},
-                    {"module_id": "orgo", "required": True, "route": "/apps/orgo"},
-                    {"module_id": "semantik_architect", "required": True, "route": "/apps/semantik_architect"},
-                    {"module_id": "koa_mediatheque", "required": True, "route": "/apps/koa_mediatheque"}
+                    {
+                        "module_id": "konnaxion",
+                        "required": True,
+                        "route": "/apps/konnaxion"
+                    }
                 ]
             },
             "legacy_projection": {
@@ -649,48 +652,6 @@ def normalize_v3_product_orchestration(config: dict[str, Any]) -> None:
                 )
 
 
-def normalize_owner_contract_workspace(config: dict[str, Any]) -> None:
-    """Migrate the known Koali/Konnaxion pilot to the owner-contract workspace launcher.
-
-    Custom product stacks are preserved. Only the canonical legacy pair is
-    collapsed to the single Koali launcher product.
-    """
-    dev_stack = config.setdefault("dev_stack", {})
-    products = config.setdefault("products", {})
-    integration = dev_stack.setdefault("koali_spaces_integration", {})
-
-    if dev_stack.get("products") == ["konnaxion", "koali-spaces"]:
-        dev_stack["products"] = ["koali-spaces"]
-        actions = dev_stack.setdefault("product_actions", {})
-        if isinstance(actions, dict):
-            actions.pop("konnaxion", None)
-
-    spaces = products.get("koali-spaces")
-    if isinstance(spaces, dict):
-        commands = spaces.setdefault("commands", {})
-        if isinstance(commands, dict) and str(commands.get("start", "")) in {"pnpm run start", "pnpm run dev"}:
-            commands["start"] = "pnpm dev"
-        environment = spaces.setdefault("environment", {})
-        if isinstance(environment, dict):
-            environment.pop("KOALI_SPACES_FRAME_SRC", None)
-
-    if isinstance(integration, dict):
-        actions = integration.setdefault("actions", {})
-        known_legacy = integration.get("mode") == "legacy_projection" and isinstance(actions, dict) and not str(actions.get("activate", "")).strip()
-        if known_legacy:
-            integration["mode"] = "delegated"
-            actions["activate"] = "ecosystem:ready"
-            actions.setdefault("deactivate", "")
-        verify = integration.setdefault("verify", {})
-        if isinstance(verify, dict) and verify.get("modules") == [{"module_id": "konnaxion", "required": True, "route": "/apps/konnaxion"}]:
-            verify["modules"] = [
-                {"module_id": "konnaxion", "required": True, "route": "/apps/konnaxion"},
-                {"module_id": "orgo", "required": True, "route": "/apps/orgo"},
-                {"module_id": "semantik_architect", "required": True, "route": "/apps/semantik_architect"},
-                {"module_id": "koa_mediatheque", "required": True, "route": "/apps/koa_mediatheque"},
-            ]
-
-
 class ConfigStore:
     def __init__(self, path: Path) -> None:
         self.path = path
@@ -710,7 +671,6 @@ class ConfigStore:
         normalize_v4_workflow_focus(merged)
         normalize_v4_spaces_integration(merged)
         normalize_v3_product_orchestration(merged)
-        normalize_owner_contract_workspace(merged)
         if migrated != raw or merged != raw:
             self.save(merged)
         return merged

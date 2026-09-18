@@ -24,8 +24,7 @@ class StabilizationWorkflowTests(unittest.TestCase):
     def test_v4_dev_stack_keeps_products_modular(self):
         cfg = json.loads((ROOT / "koali-control.json").read_text(encoding="utf-8"))
         self.assertEqual(cfg["schema_version"], 4)
-        self.assertEqual(cfg["dev_stack"]["products"], ["koali-spaces"])
-        self.assertIn("konnaxion", cfg["products"])
+        self.assertEqual(cfg["dev_stack"]["products"], ["konnaxion", "koali-spaces"])
         self.assertFalse(cfg["products"]["konnaxion"]["optional"])
         self.assertFalse(cfg["products"]["koali-spaces"]["optional"])
         self.assertTrue(cfg["products"]["orgo"]["optional"])

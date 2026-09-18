@@ -25,17 +25,17 @@ class DevStackTests(unittest.TestCase):
         self.assertEqual(DEFAULT_CONFIG["products"]["konnaxion"]["backend"], "windows")
         self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["backend"], "windows")
         self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["health_url"], "http://127.0.0.1:4173/health")
-        self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["commands"]["start"], "pnpm dev")
+        self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["commands"]["start"], "pnpm run start")
         self.assertEqual(set(DEFAULT_CONFIG["products"]["konnaxion"]["services"]), {"api", "web"})
         self.assertEqual(DEFAULT_CONFIG["products"]["konnaxion"]["services"]["web"]["health_url"], "http://127.0.0.1:4300/")
         self.assertEqual(set(DEFAULT_CONFIG["products"]["konnaxion-capsule-manager"]["services"]), {"agent", "manager"})
-        self.assertEqual(DEFAULT_CONFIG["dev_stack"]["products"], ["koali-spaces"])
+        self.assertEqual(DEFAULT_CONFIG["dev_stack"]["products"], ["konnaxion", "koali-spaces"])
         self.assertIn("integrations/konnaxion/tests", DEFAULT_CONFIG["dev_stack"]["gates"][0]["command"])
         integration = DEFAULT_CONFIG["dev_stack"]["koali_spaces_integration"]
         self.assertTrue(integration["enabled"])
-        self.assertEqual(integration["mode"], "delegated")
+        self.assertEqual(integration["mode"], "legacy_projection")
         self.assertEqual(integration["product_id"], "koali-spaces")
-        self.assertEqual({item["module_id"] for item in integration["verify"]["modules"]}, {"konnaxion", "orgo", "semantik_architect", "koa_mediatheque"})
+        self.assertEqual(integration["verify"]["modules"][0]["module_id"], "konnaxion")
         self.assertEqual(integration["legacy_projection"]["konnaxion_embed_base"], "http://127.0.0.1:4300")
         self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["environment"]["KOALI_SPACES_STATE_ROOT"], integration["state_root"])
 
@@ -45,8 +45,8 @@ class DevStackTests(unittest.TestCase):
         self.assertEqual(cfg["products"]["konnaxion"]["open_url"], "http://127.0.0.1:4300/")
         self.assertEqual(cfg["products"]["koali-spaces"]["open_url"], "http://127.0.0.1:4173/")
         self.assertEqual(cfg["products"]["koali-spaces"]["commands"]["smoke"], "pnpm run smoke:runtime")
-        self.assertEqual(cfg["products"]["koali-spaces"]["commands"]["start"], "pnpm dev")
-        self.assertNotIn("konnaxion", cfg["dev_stack"]["product_actions"])
+        self.assertEqual(cfg["products"]["koali-spaces"]["commands"]["start"], "pnpm run start")
+        self.assertEqual(cfg["dev_stack"]["product_actions"]["konnaxion"], ["prepare", "migrate", "validate", "test", "build"])
         self.assertIn("frontend", cfg["products"]["konnaxion"]["commands"]["build"])
         self.assertIn("--create-db", cfg["products"]["konnaxion"]["commands"]["test"])
         self.assertIn("pnpm exec cross-env FORCE_COLOR=1 jest --runInBand", cfg["products"]["konnaxion"]["commands"]["test"])
@@ -56,7 +56,7 @@ class DevStackTests(unittest.TestCase):
         self.assertEqual(web["health_url"], "http://127.0.0.1:4300/")
         integration = cfg["dev_stack"]["koali_spaces_integration"]
         self.assertTrue(integration["enabled"])
-        self.assertEqual(integration["mode"], "delegated")
+        self.assertEqual(integration["mode"], "legacy_projection")
         self.assertEqual(cfg["products"]["koali-spaces"]["environment"]["KOALI_SPACES_STATE_ROOT"], integration["state_root"])
         self.assertTrue(cfg["products"]["koali-spaces"]["environment"]["KOALI_SPACES_SURFACE_REGISTRY"].endswith("surface-runtime.json"))
 
@@ -332,8 +332,7 @@ class DevStackTests(unittest.TestCase):
         self.assertNotIn("koali_spaces_pilot", cfg["dev_stack"])
         integration = cfg["dev_stack"]["koali_spaces_integration"]
         self.assertFalse(integration["enabled"])
-        self.assertEqual(integration["mode"], "delegated")
-        self.assertEqual(integration["actions"]["activate"], "ecosystem:ready")
+        self.assertEqual(integration["mode"], "legacy_projection")
         self.assertEqual(integration["state_root"], r"D:\old-runtime\spaces")
         self.assertEqual(integration["legacy_projection"]["konnaxion_embed_base"], "http://127.0.0.1:9999")
         self.assertEqual(integration["verify"]["modules"][0]["module_id"], "demo")
@@ -434,7 +433,7 @@ class DevStackTests(unittest.TestCase):
             legacy["products"]["koali-spaces"]["commands"]["start"] = "pnpm run dev"
             path.write_text(json.dumps(legacy), encoding="utf-8")
             cfg = ConfigStore(path).load()
-        self.assertEqual(cfg["products"]["koali-spaces"]["commands"]["start"], "pnpm dev")
+        self.assertEqual(cfg["products"]["koali-spaces"]["commands"]["start"], "pnpm run start")
 
 
 if __name__ == "__main__":

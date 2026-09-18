@@ -172,10 +172,11 @@
         "validate": "pnpm run validate",
         "build": "pnpm run build",
         "smoke": "pnpm run smoke:runtime",
-        "start": "pnpm dev"
+        "start": "pnpm run start"
       },
       "environment": {
         "KOALI_SPACES_PORT": "4173",
+        "KOALI_SPACES_FRAME_SRC": "http://127.0.0.1:4300",
         "KOALI_SPACES_STATE_ROOT": "C:\\mycode\\kOA-Linux\\.koali-control-runtime\\koali-spaces",
         "KOALI_SPACES_SURFACE_REGISTRY": "C:\\mycode\\kOA-Linux\\.koali-control-runtime\\koali-spaces\\surface-runtime.json"
       },
@@ -241,6 +242,7 @@
   },
   "dev_stack": {
     "products": [
+      "konnaxion",
       "koali-spaces"
     ],
     "default_product_actions": [
@@ -248,6 +250,13 @@
       "build"
     ],
     "product_actions": {
+      "konnaxion": [
+        "prepare",
+        "migrate",
+        "validate",
+        "test",
+        "build"
+      ],
       "koali-spaces": [
         "validate",
         "build",
@@ -267,11 +276,11 @@
     "command_timeout_seconds": 1800,
     "koali_spaces_integration": {
       "enabled": true,
-      "mode": "delegated",
+      "mode": "legacy_projection",
       "product_id": "koali-spaces",
       "state_root": "C:\\mycode\\kOA-Linux\\.koali-control-runtime\\koali-spaces",
       "actions": {
-        "activate": "ecosystem:ready",
+        "activate": "",
         "deactivate": ""
       },
       "verify": {
@@ -280,21 +289,6 @@
             "module_id": "konnaxion",
             "required": true,
             "route": "/apps/konnaxion"
-          },
-          {
-            "module_id": "orgo",
-            "required": true,
-            "route": "/apps/orgo"
-          },
-          {
-            "module_id": "semantik_architect",
-            "required": true,
-            "route": "/apps/semantik_architect"
-          },
-          {
-            "module_id": "koa_mediatheque",
-            "required": true,
-            "route": "/apps/koa_mediatheque"
           }
         ]
       },
