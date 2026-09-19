@@ -1,0 +1,20 @@
+# Local backups and runtime output
+.koali-ks4-backup/
+logs/
+
+# Python caches/environments
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+*.pyo
+
+# Local temporary output
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup

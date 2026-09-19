@@ -1,0 +1,13 @@
+Koali Control Panel 4.1.1 — validation executed in this workspace
+
+99/99 tests PASS: python -W error::ResourceWarning -m unittest discover -s tests -q
+All koali_control Python files parse with py_compile.
+
+Added coverage includes:
+- transient untracked assembly/uv.lock cleanup after effective-profile generation;
+- preservation of a tracked/modified assembly/uv.lock;
+- frozen all-groups component-build environment preparation;
+- clean-worktree verification before strict component builds;
+- DEBUG PRINCIPAL final-profile routing.
+
+Not executed here: native Windows GUI, live WSL workspace import, QEMU, or the user's live component build.

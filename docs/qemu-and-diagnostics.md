@@ -103,3 +103,10 @@ PREPARE
 ```
 
 For runtime work, prepare an actual QEMU/image/profile context first, then run the scoped runtime diagnostic path. For final validation/release, use the strict campaigns without reclassifying expected subsystem/conformance blockers.
+
+## Mise à jour 4.1
+
+**Koali System** et **Store / N13** utilisent l'hôte natif et les cibles configurées
+dans LevelUpDiag. **System N10** garde le workspace et le contexte QEMU existants.
+Le Control Panel ne transforme pas un test de sources Windows en qualification
+Linux. Voir [les règles de routage](../UPDATE_KCP4_1_DIAGNOSTICS.md).

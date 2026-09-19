@@ -1,1 +1,32 @@
 GitSink.bat
+
+# Python environments, caches, tests, and coverage
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local runtime output
+logs/*
+!logs/.gitkeep
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Local Koali backups
+.koali-ks4-backup/
+
+# IDE and OS metadata
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini

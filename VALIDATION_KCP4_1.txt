@@ -1,0 +1,16 @@
+Koali Control Panel 4.1 — validation executed in this workspace
+
+94/94 tests PASS: python -W error::ResourceWarning -m unittest discover -s tests -q
+Includes the existing 84 tests and 10 added tests covering routing, literal
+PowerShell arguments, QEMU/target isolation, report campaign/run identity,
+configuration-based report resolution, actual Linux child-process termination,
+nonblocking cancellation, bounded event draining and refresh exclusion.
+Existing assertions updated for explicit --target and PowerShell single quoting.
+All koali_control Python files parse; koali-control.json parses.
+
+Linux process cancellation/timeout tests execute real child processes.
+Tk event scheduling tests use headless objects; no GUI rendering claim.
+Report-path tests simulate the LevelUpDiag configuration contract, not its full runtime.
+Not executed: native Windows/PowerShell, WSL, QEMU, GUI session, full live
+LevelUpDiag campaigns or any store package installation.
+Only the Koali-Control-Panel repository was modified by this update.

@@ -89,7 +89,11 @@ uv run --frozen python -m koa_tools.commands.build_component \
 
 This direct module call is intentional because `build-component` is not represented as a public subcommand of `koa_tools.cli`.
 
-If the `koa-node-agent` Rust build fails under WSL, the orchestrator can replay the canonical Cargo build in a diagnostic temporary context so the compiler/offline-cache error is visible.
+Before a component build, the Control Panel runs `uv sync --frozen --all-groups` in the root workspace and verifies that the Git worktree is clean. This is preparation only: the repository-owned component builder still performs its Python/Rust build offline and remains fail-closed.
+
+`Generate Effective Profile` may cause UV to create `assembly/uv.lock` because `assembly` is a standalone project without a committed lock in the current repository revision. The Control Panel removes that path only when Git reports it as untracked; a tracked lock is preserved.
+
+If the `koa-node-agent` Rust build fails under WSL, the orchestrator can replay the canonical Cargo build in a diagnostic temporary context so the compiler/offline-cache error is visible. Python component failures additionally report whether the prepared root environment exposes `setuptools` and `wheel`.
 
 ## Bring Koali to ready
 

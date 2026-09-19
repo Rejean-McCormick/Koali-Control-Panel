@@ -1,16 +1,20 @@
 from __future__ import annotations
 
 import json
+import os
+from dataclasses import replace
 import re
 import shlex
 from typing import Callable
 
-from .backends import ExecutionBackend, WslBackend, shell_join
+from .backends import ExecutionBackend, WindowsBackend, WslBackend, shell_join
 from .config import QEMU_ENV_MAP, QEMU_PATH_FIELDS
 from .models import Workspace
 
 
 DEFAULT_CAMPAIGNS: dict[str, str] = {
+    "koali_system": "koali-system",
+    "store": "store",
     "stabilization": "stabilization",
     "stabilization_runtime": "stabilization-runtime",
     "developer": "debug",
@@ -56,11 +60,34 @@ class LevelUpDiagAdapter:
     def enabled(self) -> bool:
         return bool(self._config().get("enabled", True))
 
+    def routed_workspace(self, workspace: Workspace, selection: str) -> Workspace:
+        if selection not in {"koali-system", "koali-system-debug", "store", "N12", "N13"}:
+            return workspace
+        backend = self._config().get("campaign_backends", {}).get(selection, "native")
+        if backend == "native":
+            backend = "windows" if os.name == "nt" else "native_linux"
+        if backend not in {"windows", "native_linux", "wsl"}:
+            raise ValueError(f"Unsupported diagnostic backend: {backend}")
+        # Empty root means LevelUpDiag owns the campaign target, including store.root.
+        return replace(workspace, backend=backend, root="")
+
+    @staticmethod
+    def _ps_quote(value: str) -> str:
+        return "'" + str(value).replace("'", "''") + "'"
+
+    def _script(self, workspace, root, argv, env):
+        if isinstance(self.backend(workspace), WindowsBackend):
+            q = self._ps_quote
+            prefix = " ".join(f"$env:{key}={q(value)};" for key, value in env.items())
+            return (f"$ErrorActionPreference='Stop'; {prefix} Set-Location -LiteralPath {q(root)}; "
+                    + "& " + " ".join(q(arg) for arg in argv) + "; exit $LASTEXITCODE")
+        return f"cd {shlex.quote(root)} && {self._env_prefix(env)} {shell_join(argv)}"
+
     def backend(self, workspace: Workspace) -> ExecutionBackend:
         return self.backend_factory(workspace.backend)
 
     def root(self, workspace: Workspace) -> str:
-        raw = str(self._config().get("root", "")).strip()
+        raw = str(self._config().get("roots", {}).get(workspace.backend) or self._config().get("root", "")).strip()
         if not raw:
             return ""
         backend = self.backend(workspace)
@@ -89,16 +116,12 @@ class LevelUpDiagAdapter:
         root = self.root(workspace)
         if not root:
             return False, "LevelUpDiag root is not configured"
-        probe = self.backend(workspace).capture_shell(
-            " && ".join(
-                [
-                    f"test -d {shlex.quote(root)}",
-                    f"test -f {shlex.quote(root + '/levelupdiag.py')}",
-                    f"test -f {shlex.quote(root + '/levelupdiag_manifest.json')}",
-                ]
-            ),
-            timeout=20,
-        )
+        if isinstance(self.backend(workspace), WindowsBackend):
+            source = "from pathlib import Path; import sys; p=Path('.'); sys.exit(0 if p.is_dir() and (p/'levelupdiag.py').is_file() and (p/'levelupdiag_manifest.json').is_file() else 1)"
+            script = self._script(workspace, root, ["python", "-c", source], {})
+        else:
+            script = " && ".join([f"test -d {shlex.quote(root)}", f"test -f {shlex.quote(root + '/levelupdiag.py')}", f"test -f {shlex.quote(root + '/levelupdiag_manifest.json')}"])
+        probe = self.backend(workspace).capture_shell(script, timeout=20)
         if probe.code != 0:
             return False, f"LevelUpDiag is not usable at {root}"
         return True, root
@@ -131,10 +154,10 @@ class LevelUpDiagAdapter:
 
     def _execution_env(self, workspace: Workspace, *, include_qemu: bool) -> dict[str, str]:
         env = {
-            "LEVELUPDIAG_TARGET_REPO_ROOT": self.target_root(workspace),
+            "LEVELUPDIAG_TARGET_REPO_ROOT": self.target_root(workspace) if workspace.root else "",
             "LEVELUPDIAG_APP_NAME": "kOA-Linux",
         }
-        if include_qemu:
+        if include_qemu and workspace.root:
             env.update(self.qemu_environment(workspace))
         return env
 
@@ -143,7 +166,6 @@ class LevelUpDiagAdapter:
         exports = " ".join(
             f"{name}={shlex.quote(value)}"
             for name, value in env.items()
-            if value
         )
         return f"env {exports}".rstrip()
 
@@ -157,52 +179,41 @@ class LevelUpDiagAdapter:
         timeout: int = 20,
     ):
         env = self._execution_env(workspace, include_qemu=include_qemu)
-        python_cmd = shell_join(["python", "-c", source])
-        script = f"cd {shlex.quote(root)} && {self._env_prefix(env)} {python_cmd}"
+        script = self._script(workspace, root, ["python", "-c", source], env)
         return self.backend(workspace).capture_shell(script, timeout=timeout)
 
-    def _campaign_marker(
-        self,
-        workspace: Workspace,
-        root: str,
-        campaign: str,
-        *,
-        include_qemu: bool,
-    ) -> str:
-        # LevelUpDiag v2 publishes the latest campaign summary under its configured
-        # control root. The Control Panel reads that path but never recalculates verdicts.
+    def _report_marker(self, workspace, root, selection, level, include_qemu):
+        target = self.target_root(workspace) if workspace.root else None
         source = (
-            "from pathlib import Path; "
-            "from levelupdiag_core.config import load_config; "
-            "cfg=load_config(); p=Path(cfg['_control_root'])/'latest'/'summary.json'; "
-            "s=p.stat() if p.is_file() else None; "
-            "print((str(p)+'\t'+str(s.st_mtime_ns)+'\t'+str(s.st_size)) if s else '')"
+            "from pathlib import Path; import json,re; from levelupdiag_core.config import load_config; "
+            f"target={target!r}; selection={selection!r}; tool=Path.cwd(); cfg=load_config(tool,target); "
+            "mapped=cfg.get('campaign_targets',{}).get(selection) if target is None else None; "
+            "cfg=load_config(tool,mapped) if mapped else cfg; "
+            "control=Path(cfg['_control_root']); p=control/'latest'/'summary.json'; "
+            "d=json.loads(p.read_text(encoding='utf-8')) if p.is_file() else {}; "
+            "rid=str(d.get('run_id','')); "
+            "valid=d.get('selection')==selection and bool(re.fullmatch(r'[A-Za-z0-9_-]+',rid)); "
+            "p=control/'runs'/rid/'summary.json' if valid else p; "
+            + (f"p=p.parent/'levels'/{level!r}/'result.json'; " if level else "")
+            + "st=p.stat() if valid and p.is_file() else None; "
+            "print((str(p)+'\t'+str(st.st_mtime_ns)+'\t'+str(st.st_size)) if st else '')"
         )
-        result = self._levelupdiag_python(
-            workspace, root, source, include_qemu=include_qemu
-        )
+        result = self._levelupdiag_python(workspace, root, source, include_qemu=include_qemu)
+        if result.code:
+            self.log("Cannot locate LevelUpDiag report: " + result.output[-2000:])
         return result.output.strip() if result.code == 0 else ""
 
-    def _level_marker(
-        self,
-        workspace: Workspace,
-        root: str,
-        level: str,
-        *,
-        include_qemu: bool,
-    ) -> str:
-        source = (
-            "from pathlib import Path; "
-            "from levelupdiag_core.config import load_config; "
-            "cfg=load_config(); "
-            f"p=Path(cfg['_control_root'])/'latest'/{level!r}/'result.json'; "
-            "s=p.stat() if p.is_file() else None; "
-            "print((str(p)+'\t'+str(s.st_mtime_ns)+'\t'+str(s.st_size)) if s else '')"
-        )
-        result = self._levelupdiag_python(
-            workspace, root, source, include_qemu=include_qemu
-        )
-        return result.output.strip() if result.code == 0 else ""
+    def _campaign_marker(self, workspace, root, campaign, *, include_qemu):
+        return self._report_marker(workspace, root, campaign, None, include_qemu)
+
+    def _level_marker(self, workspace, root, level, *, include_qemu):
+        return self._report_marker(workspace, root, level, level, include_qemu)
+
+    def _read_text(self, workspace, path):
+        if isinstance(self.backend(workspace), WindowsBackend):
+            source = f"from pathlib import Path; print(Path({path!r}).read_text(encoding='utf-8'))"
+            return self._levelupdiag_python(workspace, self.root(workspace), source, include_qemu=False)
+        return self.backend(workspace).capture_shell(f"cat -- {shlex.quote(path)}", timeout=20)
 
     def _marker(
         self,
@@ -227,10 +238,7 @@ class LevelUpDiagAdapter:
         path = marker.split("\t", 1)[0].strip()
         if not path:
             return None
-        result = self.backend(workspace).capture_shell(
-            f"cat -- {shlex.quote(path)}",
-            timeout=20,
-        )
+        result = self._read_text(workspace, path)
         if result.code != 0 or not result.output.strip():
             return None
         try:
@@ -244,7 +252,7 @@ class LevelUpDiagAdapter:
         # Campaign summaries intentionally stay compact. Enrich presentation from the
         # LevelUpDiag-owned latest per-level result files without changing verdicts.
         if data.get("schema") == "levelupdiag.campaign-summary.v2" and isinstance(data.get("levels"), list):
-            latest_dir = path.rsplit("/", 1)[0]
+            latest_dir = path.replace("\\", "/").rsplit("/", 1)[0]
             enriched: list[dict] = []
             for row in data["levels"]:
                 if not isinstance(row, dict):
@@ -252,16 +260,14 @@ class LevelUpDiagAdapter:
                 item = dict(row)
                 level_id = str(item.get("id", "")).strip()
                 if level_id and re.fullmatch(r"N\d{2}", level_id):
-                    detail_path = f"{latest_dir}/{level_id}/result.json"
-                    detail = self.backend(workspace).capture_shell(
-                        f"cat -- {shlex.quote(detail_path)}", timeout=20
-                    )
+                    detail_path = f"{latest_dir}/levels/{level_id}/result.json" if data.get("run_id") else f"{latest_dir}/{level_id}/result.json"
+                    detail = self._read_text(workspace, detail_path)
                     if detail.code == 0 and detail.output.strip():
                         try:
                             level_data = json.loads(detail.output)
                         except json.JSONDecodeError:
                             level_data = None
-                        if isinstance(level_data, dict):
+                        if isinstance(level_data, dict) and (not data.get("run_id") or level_data.get("run_id") == data["run_id"]):
                             item["findings"] = level_data.get("findings", [])
                             item["metrics"] = level_data.get("metrics", {})
                 enriched.append(item)
@@ -394,6 +400,8 @@ class LevelUpDiagAdapter:
         report_kind: str,
         report_key: str,
     ) -> int:
+        workspace = self.routed_workspace(workspace, report_key)
+        self.log(f"Diagnostic context: {workspace.backend}; target={workspace.root or 'LevelUpDiag campaign configuration'}")
         available, detail = self._available(workspace)
         if not available:
             self.log(detail)
@@ -415,8 +423,11 @@ class LevelUpDiagAdapter:
             selection = "release"
         else:
             selection = args[0] if args else "stabilization"
-        command = shell_join(["python", "levelupdiag.py", "run", selection])
-        script = f"cd {shlex.quote(root)} && {self._env_prefix(env)} {command}"
+        argv = ["python", "levelupdiag.py"]
+        if workspace.root:
+            argv += ["--target", self.target_root(workspace)]
+        argv += ["run", selection]
+        script = self._script(workspace, root, argv, env)
         code = self.backend(workspace).run_shell(script, label, timeout=timeout)
 
         after = self._marker(
@@ -428,7 +439,7 @@ class LevelUpDiagAdapter:
         )
         if after and after != before:
             data = self._read_marker_json(workspace, after)
-            if data is not None:
+            if data is not None and (report_kind != "campaign" or data.get("selection") == selection):
                 self._publish_report(data)
                 return code
         self._publish_missing_report(label)
@@ -473,7 +484,7 @@ class LevelUpDiagAdapter:
             include_qemu=True,
             timeout=timeout,
             report_kind="campaign",
-            report_key="run-levels",
+            report_key="release",
         )
 
     def run_system(self, workspace: Workspace, *, timeout: int | None = None) -> int:

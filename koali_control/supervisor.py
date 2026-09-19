@@ -11,6 +11,7 @@ from typing import Callable
 
 from .backends import ExecutionBackend, NativeLinuxBackend, WindowsBackend, WslBackend
 from .process import AdaptiveStreamDecoder
+from .process_tree import process_options, terminate_tree
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,8 +55,10 @@ class ProcessSupervisor:
         assignments = " ".join(f"export {key}={shlex.quote(str(value))};" for key, value in env.items())
         body = f'export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"; {assignments} cd {shlex.quote(root)} && exec {command}'
         if isinstance(backend, WindowsBackend):
-            assignments = " ".join(f"$env:{key}={__import__('json').dumps(str(value))};" for key, value in env.items())
-            script = f"{assignments} Set-Location -LiteralPath {__import__('json').dumps(root)}; {command}"
+            def ps_quote(value):
+                return "'" + value.replace("'", "''") + "'"
+            assignments = " ".join(f"$env:{key}={ps_quote(str(value))};" for key, value in env.items())
+            script = f"{assignments} Set-Location -LiteralPath {ps_quote(root)}; {command}"
             return backend.powershell_argv(script)
         if isinstance(backend, WslBackend):
             return ["wsl.exe", "-d", backend.distro, "--", backend.shell, "-lc", body]
@@ -73,11 +76,12 @@ class ProcessSupervisor:
         def reader() -> None:
             try:
                 while True:
-                    chunk = proc.stdout.read(4096)
+                    chunk = proc.stdout.read1(4096)
                     if not chunk:
                         break
                     output_queue.put(chunk)
             finally:
+                proc.stdout.close()
                 output_queue.put(None)
 
         threading.Thread(target=reader, daemon=True, name=f"koali-supervisor-reader-{item.process_id}").start()
@@ -129,7 +133,7 @@ class ProcessSupervisor:
                 cwd=cwd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                creationflags=flags,
+                **process_options(),
             )
         except OSError as exc:
             self.log(f"ERROR [{process_id}] cannot start: {exc}")
@@ -156,36 +160,15 @@ class ProcessSupervisor:
     def stop(self, process_id: str, *, timeout: float = 8.0) -> bool:
         with self._lock:
             item = self._items.get(process_id)
-        if not item or item.proc.poll() is not None:
+        if not item:
             return True
         item.stop_requested = True
         self.log(f"[{process_id}] STOP requested")
         try:
-            if item.windows_tree and os.name == "nt":
-                # pnpm/npm commonly spawn a child Node process. Kill the complete
-                # process tree so STOP/RESTART does not leave an orphaned dev server.
-                subprocess.run(
-                    ["taskkill", "/PID", str(item.proc.pid), "/T", "/F"],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                    timeout=max(3.0, timeout),
-                    check=False,
-                    creationflags=self._no_window_flags(),
-                )
-                try:
-                    item.proc.wait(timeout=3)
-                except subprocess.TimeoutExpired:
-                    item.proc.kill()
-            else:
-                item.proc.terminate()
-                item.proc.wait(timeout=timeout)
+            terminate_tree(item.proc, timeout=timeout)
         except subprocess.TimeoutExpired:
-            self.log(f"[{process_id}] terminate timeout; killing process")
-            item.proc.kill()
-            try:
-                item.proc.wait(timeout=3)
-            except subprocess.TimeoutExpired:
-                return False
+            self.log(f"ERROR [{process_id}] process did not exit after tree termination")
+            return False
         except OSError as exc:
             self.log(f"ERROR [{process_id}] stop failed: {exc}")
             return False

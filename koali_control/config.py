@@ -501,6 +501,8 @@ def normalize_levelupdiag_campaigns(config: dict[str, Any]) -> None:
         mapped = _LEGACY_LEVELUPDIAG_CAMPAIGNS.get(str(value))
         if mapped:
             campaigns[role] = mapped
+    campaigns.setdefault("koali_system", "koali-system")
+    campaigns.setdefault("store", "store")
     campaigns.setdefault("stabilization", "stabilization")
     campaigns.setdefault("stabilization_runtime", "stabilization-runtime")
 

@@ -92,7 +92,7 @@ class DevStackTests(unittest.TestCase):
             {"KOALI_SPACES_PORT": "4173"},
         )
         command = argv[-1]
-        self.assertIn("$env:KOALI_SPACES_PORT=\"4173\"", command)
+        self.assertIn("$env:KOALI_SPACES_PORT='4173'", command)
         self.assertIn("Set-Location -LiteralPath", command)
         self.assertIn("pnpm run start", command)
 

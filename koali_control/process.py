@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .process_tree import process_options, terminate_tree
+
 import codecs
 import queue
 import subprocess
@@ -77,6 +79,7 @@ class ProcessRunner:
         self.log = log
         self._active: subprocess.Popen[bytes] | None = None
         self._lock = threading.Lock()
+        self._cancel = threading.Event()
 
     @staticmethod
     def no_window_flags() -> int:
@@ -118,6 +121,7 @@ class ProcessRunner:
         cwd: str | None = None,
         input_text: str | None = None,
     ) -> int:
+        self._cancel.clear()
         args = [str(item) for item in argv]
         self.log(f"> {label}")
         self.log("  " + subprocess.list2cmdline(args))
@@ -128,7 +132,7 @@ class ProcessRunner:
                 stdin=subprocess.PIPE if input_text is not None else None,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                creationflags=self.no_window_flags(),
+                **process_options(),
             )
         except OSError as exc:
             self.log(f"ERROR cannot start: {exc}")
@@ -149,11 +153,12 @@ class ProcessRunner:
             assert proc.stdout is not None
             try:
                 while True:
-                    chunk = proc.stdout.read(4096)
+                    chunk = proc.stdout.read1(4096)
                     if not chunk:
                         break
                     output_queue.put(chunk)
             finally:
+                proc.stdout.close()
                 output_queue.put(None)
 
         reader = threading.Thread(target=pump, daemon=True, name="koali-process-output")
@@ -183,15 +188,12 @@ class ProcessRunner:
                         emit(decoder.feed(item))
                 except queue.Empty:
                     pass
-                if timeout and time.monotonic() - start > timeout and proc.poll() is None:
-                    proc.kill()
-                    try:
-                        proc.wait(timeout=5)
-                    except subprocess.TimeoutExpired:
-                        pass
+                if self._cancel.is_set() or (timeout and time.monotonic() - start > timeout):
+                    cancelled = self._cancel.is_set()
+                    terminate_tree(proc)
                     emit(decoder.feed(b"", final=True), flush=True)
-                    self.log(f"ERROR timeout after {timeout}s")
-                    return 124
+                    self.log("Command cancelled" if cancelled else f"ERROR timeout after {timeout}s")
+                    return 130 if cancelled else 124
                 if proc.poll() is not None and reader_done and output_queue.empty():
                     break
             emit(decoder.feed(b"", final=True), flush=True)
@@ -199,15 +201,16 @@ class ProcessRunner:
             self.log(("OK " if code == 0 else "ERROR ") + f"{label} -> exit {code}")
             return code
         finally:
+            reader.join(timeout=1)
             with self._lock:
                 self._active = None
 
     def stop_active(self) -> None:
         with self._lock:
             proc = self._active
-        if proc is not None and proc.poll() is None:
-            proc.terminate()
-            self.log("Active command termination requested")
+        if proc is not None:
+            self._cancel.set()
+            self.log("Active command tree termination requested")
 
     @property
     def active(self) -> bool:

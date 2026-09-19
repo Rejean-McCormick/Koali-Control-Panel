@@ -1,0 +1,38 @@
+[
+  {
+    "path": "koali_control/__init__.py",
+    "status": "modified"
+  },
+  {
+    "path": "koali_control/orchestration.py",
+    "status": "modified"
+  },
+  {
+    "path": "koali_control/app.py",
+    "status": "modified"
+  },
+  {
+    "path": "tests/test_core.py",
+    "status": "modified"
+  },
+  {
+    "path": "README.md",
+    "status": "modified"
+  },
+  {
+    "path": "docs/development-workflows.md",
+    "status": "modified"
+  },
+  {
+    "path": "UPDATE_KCP4_1_1_BUILD_WORKFLOW.md",
+    "status": "added"
+  },
+  {
+    "path": "VALIDATION_KCP4_1_1.txt",
+    "status": "added"
+  },
+  {
+    "path": "CHANGES_KCP4_1_1.json",
+    "status": "added"
+  }
+]

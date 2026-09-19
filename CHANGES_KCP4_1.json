@@ -1,0 +1,58 @@
+[
+  {
+    "path": "README.md",
+    "status": "modified"
+  },
+  {
+    "path": "docs/qemu-and-diagnostics.md",
+    "status": "modified"
+  },
+  {
+    "path": "koali-control.json",
+    "status": "modified"
+  },
+  {
+    "path": "koali_control/__init__.py",
+    "status": "modified"
+  },
+  {
+    "path": "koali_control/app.py",
+    "status": "modified"
+  },
+  {
+    "path": "koali_control/config.py",
+    "status": "modified"
+  },
+  {
+    "path": "koali_control/levelupdiag.py",
+    "status": "modified"
+  },
+  {
+    "path": "koali_control/process.py",
+    "status": "modified"
+  },
+  {
+    "path": "koali_control/supervisor.py",
+    "status": "modified"
+  },
+  {
+    "path": "tests/test_core.py",
+    "status": "modified"
+  },
+  {
+    "path": "tests/test_dev_stack.py",
+    "status": "modified"
+  },
+  {
+    "path": "UPDATE_KCP4_1_DIAGNOSTICS.md",
+    "status": "added"
+  },
+  {
+    "path": "koali_control/process_tree.py",
+    "status": "added"
+  },
+  {
+    "path": "tests/test_control_41.py",
+    "status": "added"
+  }
+]

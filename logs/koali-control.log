@@ -18990,3 +18990,896 @@
 [23:29:11] [konnaxion:api] INFO:     127.0.0.1:65334 - "GET / HTTP/1.1" 200 OK
 [23:29:11] [konnaxion:api] INFO:     127.0.0.1:65342 - "GET / HTTP/1.1" 200 OK
 [23:29:11] [konnaxion:api] exited with exit 1073807364
+[07:31:18] Koali Control Panel 4.1.0 started
+[07:32:01] Preparing development environment: koa-linux-main
+[07:32:06] PASS    WSL: available
+[07:32:06] PASS    Configured distro: Ubuntu-24.04
+[07:32:06] PASS    WSL version: WSL 2
+[07:32:06] PASS    Distro runtime: command-ready
+[07:32:06] PASS    Linux default user: rejean (uid 1000)
+[07:32:06] PASS    Linux environment: ubuntu 24.04
+[07:32:06] PASS    systemd: operational under WSL; ignored non-applicable console units: getty@tty1.service
+[07:32:06] PASS    Tool: git: /usr/bin/git
+[07:32:06] PASS    Tool: python: /usr/bin/python
+[07:32:06] PASS    Tool: uv: /home/rejean/.local/bin/uv
+[07:32:14] Workspace source sync: source_changed — Windows source changed since the last imported snapshot
+[07:32:14] Refreshing the Linux workspace from the current Windows checkout; the previous workspace will be preserved as a folder backup
+[07:32:14] > Refresh workspace koa-linux-main
+[07:32:14]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[07:32:37] Previous workspace preserved: /home/rejean/work/.koali-control-backups/koa-linux-20260919T113215Z-504
+[07:32:37] Workspace imported: /home/rejean/work/koa-linux
+[07:32:37] Source fingerprint recorded: e8dc5f7979e91151d236a419adf6bc06a9fa4be822719ce9b382cd26f2d60ead
+[07:32:38] OK Refresh workspace koa-linux-main -> exit 0
+[07:32:39] PASS    Rust toolchain contract: channel 1.85.1; profile minimal; components clippy, rustfmt
+[07:32:39] PASS    Tool: rustup: /usr/bin/rustup
+[07:32:39] PASS    Rust toolchain 1.85.1: installed
+[07:32:39] PASS    Tool: rustc: rustc 1.85.1 (4eb161250 2025-03-15)
+[07:32:39] PASS    Tool: cargo: cargo 1.85.1 (d73d2caf9 2024-12-31)
+[07:32:39] PASS    Rust component: clippy: installed
+[07:32:39] PASS    Rust component: rustfmt: installed
+[07:32:40] PASS    Tool: cc: /usr/bin/cc (cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0)
+[07:32:40] PASS    Native compiler/linker: temporary C compile/link probe succeeded
+[07:32:41] PASS    Cargo offline cache: Cargo.lock dependencies available offline
+[07:32:41] Running canonical repository development setup (bootstrap + frozen UV sync + local hooks)
+[07:32:41] > Setup development
+[07:32:41]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[07:32:42] bootstrap: repository root: /home/rejean/work/koa-linux
+[07:32:42] bootstrap: verifying uv.lock
+[07:32:42] Using CPython 3.13.15
+[07:32:42] Resolved 32 packages in 16ms
+[07:32:42] bootstrap: synchronizing .venv from frozen inputs
+[07:32:42] Using CPython 3.13.15
+[07:32:42] Creating virtual environment at: .venv
+[07:32:42]    Building koa-linux @ file:///home/rejean/work/koa-linux
+[07:32:42]    Building koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[07:32:42]    Building koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[07:32:42]    Building koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[07:32:42]    Building koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[07:32:42]       Built koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[07:32:43]       Built koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[07:32:43]       Built koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[07:32:43]       Built koa-linux @ file:///home/rejean/work/koa-linux
+[07:32:43]       Built koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[07:32:43] Prepared 5 packages in 1.16s
+[07:32:43] Installed 31 packages in 91ms
+[07:32:43]  + attrs==26.1.0
+[07:32:43]  + cfgv==3.4.0
+[07:32:43]  + distlib==0.4.0
+[07:32:43]  + filelock==3.20.0
+[07:32:43]  + identify==2.6.15
+[07:32:43]  + iniconfig==2.1.0
+[07:32:43]  + jsonschema==4.26.0
+[07:32:43]  + jsonschema-specifications==2025.9.1
+[07:32:43]  + koa-interfaces==1.0.0 (from file:///home/rejean/work/koa-linux/interfaces/python)
+[07:32:43]  + koa-konnaxion-adapter==0.1.0 (from file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter)
+[07:32:43]  + koa-linux==0.1.0 (from file:///home/rejean/work/koa-linux)
+[07:32:43]  + koa-resource-governor==1.0.0 (from file:///home/rejean/work/koa-linux/components/resource-governor)
+[07:32:43]  + koa-sentient-adapter==1.0.0 (from file:///home/rejean/work/koa-linux/integrations/sentient/adapter)
+[07:32:43]  + mypy==1.17.1
+[07:32:43]  + mypy-extensions==1.1.0
+[07:32:43]  + nodeenv==1.9.1
+[07:32:43]  + packaging==25.0
+[07:32:43]  + pathspec==0.12.1
+[07:32:43]  + platformdirs==4.5.0
+[07:32:43]  + pluggy==1.6.0
+[07:32:43]  + pre-commit==4.3.0
+[07:32:43]  + pygments==2.19.2
+[07:32:43]  + pytest==9.0.3
+[07:32:43]  + pyyaml==6.0.3
+[07:32:43]  + referencing==0.37.0
+[07:32:43]  + rpds-py==2026.6.3
+[07:32:43]  + ruff==0.12.12
+[07:32:43]  + setuptools==82.0.1
+[07:32:43]  + typing-extensions==4.15.0
+[07:32:43]  + virtualenv==20.35.3
+[07:32:43]  + wheel==0.48.0
+[07:32:43] bootstrap: complete
+[07:32:43] setup-development: installing repository-local pre-commit hook
+[07:32:43] pre-commit installed at .git/hooks/pre-commit
+[07:32:43] setup-development: verifying CLI help
+[07:32:43] setup-development: complete
+[07:32:44] OK Setup development -> exit 0
+[07:32:45] PASS    WSL: available
+[07:32:45] PASS    Configured distro: Ubuntu-24.04
+[07:32:45] PASS    WSL version: WSL 2
+[07:32:45] PASS    Distro runtime: command-ready
+[07:32:45] PASS    Linux default user: rejean (uid 1000)
+[07:32:45] PASS    Linux environment: ubuntu 24.04
+[07:32:45] PASS    systemd: operational under WSL; ignored non-applicable console units: getty@tty1.service
+[07:32:45] PASS    Tool: git: /usr/bin/git
+[07:32:45] PASS    Tool: python: /usr/bin/python
+[07:32:45] PASS    Tool: uv: /home/rejean/.local/bin/uv
+[07:32:45] PASS    Workspace root: /home/rejean/work/koa-linux
+[07:32:45] PASS    Workspace filesystem: WSL Linux filesystem
+[07:32:45] PASS    Repository metadata: .git metadata present
+[07:32:45] PASS    pyproject.toml: present
+[07:32:45] PASS    uv.lock: present
+[07:32:45] PASS    .python-version: present
+[07:32:45] PASS    Workspace .venv: workspace-local environment ready
+[07:32:45] PASS    Pre-commit hook: installed
+[07:32:45] Development environment READY
+[07:47:31] QEMU infrastructure already available
+[07:47:31] QEMU context: no generated effective-profile JSON with session_runtime.surfaces found
+[07:47:32] QEMU context: repository image package status: blocked_missing_assembly_and_component_bundles
+[07:47:32] QEMU context: repository image target profile: docs/contracts/profiles/sovereign-linux-node.profile.json
+[07:47:32] QEMU context: no canonical generated system image exists and no structured build.image --output is configured
+[07:47:33] QEMU infrastructure is prepared, but repository/runtime execution context is still incomplete. Koali Control Panel will not invent kOA-Linux semantic values.
+[07:47:33] QEMU environment prepared but NOT READY
+[08:09:43] Koali Control Panel 4.1.0 started
+[08:10:53] Preparing development environment: koa-linux-main
+[08:10:58] PASS    WSL: available
+[08:10:58] PASS    Configured distro: Ubuntu-24.04
+[08:10:58] PASS    WSL version: WSL 2
+[08:10:58] PASS    Distro runtime: command-ready
+[08:10:58] PASS    Linux default user: rejean (uid 1000)
+[08:10:58] PASS    Linux environment: ubuntu 24.04
+[08:10:58] PASS    systemd: running
+[08:10:58] PASS    Tool: git: /usr/bin/git
+[08:10:58] PASS    Tool: python: /usr/bin/python
+[08:10:58] PASS    Tool: uv: /home/rejean/.local/bin/uv
+[08:11:06] Workspace source sync: source_changed — Windows source changed since the last imported snapshot
+[08:11:06] Refreshing the Linux workspace from the current Windows checkout; the previous workspace will be preserved as a folder backup
+[08:11:06] > Refresh workspace koa-linux-main
+[08:11:06]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[08:11:29] Previous workspace preserved: /home/rejean/work/.koali-control-backups/koa-linux-20260919T121107Z-504
+[08:11:29] Workspace imported: /home/rejean/work/koa-linux
+[08:11:29] Source fingerprint recorded: 63e3c06ddfef169f0a7ce0b7ec1aaf38eb8e8ac4604289b76faf91b72642cf2c
+[08:11:29] OK Refresh workspace koa-linux-main -> exit 0
+[08:11:31] PASS    Rust toolchain contract: channel 1.85.1; profile minimal; components clippy, rustfmt
+[08:11:31] PASS    Tool: rustup: /usr/bin/rustup
+[08:11:31] PASS    Rust toolchain 1.85.1: installed
+[08:11:31] PASS    Tool: rustc: rustc 1.85.1 (4eb161250 2025-03-15)
+[08:11:31] PASS    Tool: cargo: cargo 1.85.1 (d73d2caf9 2024-12-31)
+[08:11:31] PASS    Rust component: clippy: installed
+[08:11:31] PASS    Rust component: rustfmt: installed
+[08:11:32] PASS    Tool: cc: /usr/bin/cc (cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0)
+[08:11:32] PASS    Native compiler/linker: temporary C compile/link probe succeeded
+[08:11:33] PASS    Cargo offline cache: Cargo.lock dependencies available offline
+[08:11:33] Running canonical repository development setup (bootstrap + frozen UV sync + local hooks)
+[08:11:33] > Setup development
+[08:11:33]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[08:11:33] bootstrap: repository root: /home/rejean/work/koa-linux
+[08:11:33] bootstrap: verifying uv.lock
+[08:11:34] Using CPython 3.13.15
+[08:11:34] Resolved 32 packages in 14ms
+[08:11:34] bootstrap: synchronizing .venv from frozen inputs
+[08:11:34] Using CPython 3.13.15
+[08:11:34] Creating virtual environment at: .venv
+[08:11:34]    Building koa-linux @ file:///home/rejean/work/koa-linux
+[08:11:34]    Building koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[08:11:34]    Building koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[08:11:34]    Building koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[08:11:34]    Building koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[08:11:34]       Built koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[08:11:34]       Built koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[08:11:34]       Built koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[08:11:34]       Built koa-linux @ file:///home/rejean/work/koa-linux
+[08:11:35]       Built koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[08:11:35] Prepared 5 packages in 970ms
+[08:11:35] Installed 31 packages in 85ms
+[08:11:35]  + attrs==26.1.0
+[08:11:35]  + cfgv==3.4.0
+[08:11:35]  + distlib==0.4.0
+[08:11:35]  + filelock==3.20.0
+[08:11:35]  + identify==2.6.15
+[08:11:35]  + iniconfig==2.1.0
+[08:11:35]  + jsonschema==4.26.0
+[08:11:35]  + jsonschema-specifications==2025.9.1
+[08:11:35]  + koa-interfaces==1.0.0 (from file:///home/rejean/work/koa-linux/interfaces/python)
+[08:11:35]  + koa-konnaxion-adapter==0.1.0 (from file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter)
+[08:11:35]  + koa-linux==0.1.0 (from file:///home/rejean/work/koa-linux)
+[08:11:35]  + koa-resource-governor==1.0.0 (from file:///home/rejean/work/koa-linux/components/resource-governor)
+[08:11:35]  + koa-sentient-adapter==1.0.0 (from file:///home/rejean/work/koa-linux/integrations/sentient/adapter)
+[08:11:35]  + mypy==1.17.1
+[08:11:35]  + mypy-extensions==1.1.0
+[08:11:35]  + nodeenv==1.9.1
+[08:11:35]  + packaging==25.0
+[08:11:35]  + pathspec==0.12.1
+[08:11:35]  + platformdirs==4.5.0
+[08:11:35]  + pluggy==1.6.0
+[08:11:35]  + pre-commit==4.3.0
+[08:11:35]  + pygments==2.19.2
+[08:11:35]  + pytest==9.0.3
+[08:11:35]  + pyyaml==6.0.3
+[08:11:35]  + referencing==0.37.0
+[08:11:35]  + rpds-py==2026.6.3
+[08:11:35]  + ruff==0.12.12
+[08:11:35]  + setuptools==82.0.1
+[08:11:35]  + typing-extensions==4.15.0
+[08:11:35]  + virtualenv==20.35.3
+[08:11:35]  + wheel==0.48.0
+[08:11:35] bootstrap: complete
+[08:11:35] setup-development: installing repository-local pre-commit hook
+[08:11:35] pre-commit installed at .git/hooks/pre-commit
+[08:11:35] setup-development: verifying CLI help
+[08:11:35] setup-development: complete
+[08:11:35] OK Setup development -> exit 0
+[08:11:37] PASS    WSL: available
+[08:11:37] PASS    Configured distro: Ubuntu-24.04
+[08:11:37] PASS    WSL version: WSL 2
+[08:11:37] PASS    Distro runtime: command-ready
+[08:11:37] PASS    Linux default user: rejean (uid 1000)
+[08:11:37] PASS    Linux environment: ubuntu 24.04
+[08:11:37] PASS    systemd: running
+[08:11:37] PASS    Tool: git: /usr/bin/git
+[08:11:37] PASS    Tool: python: /usr/bin/python
+[08:11:37] PASS    Tool: uv: /home/rejean/.local/bin/uv
+[08:11:37] PASS    Workspace root: /home/rejean/work/koa-linux
+[08:11:37] PASS    Workspace filesystem: WSL Linux filesystem
+[08:11:37] PASS    Repository metadata: .git metadata present
+[08:11:37] PASS    pyproject.toml: present
+[08:11:37] PASS    uv.lock: present
+[08:11:37] PASS    .python-version: present
+[08:11:37] PASS    Workspace .venv: workspace-local environment ready
+[08:11:37] PASS    Pre-commit hook: installed
+[08:11:37] Development environment READY
+[08:40:56] Diagnostic context: wsl; target={home}/work/koa-linux
+[08:40:57] > LevelUpDiag campaign: validation
+[08:40:57]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[08:41:15] Another action is already running
+[08:41:16] LevelUpDiag validation [VALIDATION]: WARN
+[08:41:16]   Diagnostic execution: PASS
+[08:41:16]   System testability:    PARTIAL
+[08:41:16]   Qualification scope:  full_target
+[08:41:16]   Deferred subsystems:   none
+[08:41:16]   Conformance:           WARN
+[08:41:16]   N00  PASS         Diagnostic Integrity
+[08:41:16]   N01  PASS         Environment
+[08:41:16]   N02  WARN         Repository / Structure
+[08:41:16]   N03  PASS         Documentation
+[08:41:16]   N04  PASS         Contracts
+[08:41:16]   N05  PASS         Components
+[08:41:16]   N06  SKIP         Integrations
+[08:41:16]   N07  PASS         Profiles
+[08:41:16]   N08  BLOCKED      Security Runtime
+[08:41:16]   N09  BLOCKED      Offline Runtime
+[08:41:16]   N10  BLOCKED      System Runtime
+[08:41:16] Report: /home/rejean/work/koa-linux/.levelupdiag/runs/20260919T124058Z-abe20f27/summary.json
+[08:41:17] OK LevelUpDiag campaign: validation -> exit 0
+[08:41:20]   N02 [WARN] Git worktree contains local changes; this is advisory and does not block DEBUG.
+[08:41:20]     recommendation: Review local changes before VALIDATION/RELEASE if provenance matters.
+[08:41:20]     evidence (LevelUpDiag):
+[08:41:20]       M .koa/runtime-paths.json
+[08:41:20]        M README.md
+[08:41:20]        M ci/scripts/run-offline.py
+[08:41:20]        M ci/scripts/run-security.py
+[08:41:20]        M ci/scripts/run-system-tests.py
+[08:41:20]        D docs/CODE_SNAPSHOT_MANIFEST.md
+[08:41:20]        M docs/generated/ai-context/koa-navigation.json
+[08:41:20]        M docs/generated/ai-context/subsystem-ariane.json
+[08:41:20]        M docs/generated/ai-context/subsystem-koa_spaces.json
+[08:41:20]        M docs/generated/ai-context/subsystem-konnaxion.json
+[08:41:20]        M docs/generated/ai-context/subsystem-orgo.json
+[08:41:20]        M docs/generated/ai-context/subsystem-semantik_architect.json
+[08:41:20]        M docs/generated/ai-context/subsystem-sentient.json
+[08:41:20]        M docs/generated/document-index.json
+[08:41:20]        M docs/generated/document-index.md
+[08:41:20]        M docs/tools/_contract_first.py
+[08:41:20]        M host/image/package-sets/user-lightweight.yaml
+[08:41:20]       ?? CODE_SNAPSHOT_MANIFEST.md
+[08:41:20]       ?? ci/UPDATE_20260919.md
+[08:41:20]       ?? ci/UPDATE_FILES_20260919.json
+[08:41:20]       ?? ci/scripts/gate_scope.py
+[08:41:20]       ?? ci/tests/
+[08:41:20]       ?? host/store/
+[08:41:20]       ?? profiles/native-applications/admission/koali-essentials.json
+[08:41:20]       ?? profiles/native-applications/admission/koali-store.json
+[08:41:20]       ?? profiles/native-applications/data/koali-essentials.json
+[08:41:20]       ?? profiles/native-applications/data/koali-store.json
+[08:41:20]       ?? tests/system/test_third_party_store.py
+[08:41:20]   N06 [SKIP] Optional kOA-Linux command 'integrations' is not configured; level skipped.
+[08:41:20]   N08 [BLOCKED] kOA-Linux validation reported BLOCKED (security: blocked).
+[08:41:20]     recommendation: Inspect the captured kOA-Linux security gate report to identify failures or unmet prerequisites.
+[08:41:20]     evidence (LevelUpDiag):
+[08:41:20]       {'argv': ['uv', 'run', '--frozen', 'python', 'ci/scripts/run-security.py'], 'cwd': '/home/rejean/work/koa-linux', 'exit_code': 2, 'timed_out': False, 'duration_seconds': 2.092, 'stdout_tail': '[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_security_architecture.py\ncheck_security_architecture: pass; controls=48; profiles=10; invariants=8\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_ai_boundary.py\ncheck_ai_boundary: pass\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_component_boundaries.py\ncheck_component_boundaries: pass\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_canonical_ownership.py\ncheck_canonical_ownership: pass\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_uckk_external_boundary.py\ncheck_uckk_external_boundary: pass; findings=0\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 -m pytest -q --disable-warnings -p no:cacheprovider tests/security/test_break_glass.py tests/security/test_capability_drop.py tests/security/test_network_exposure.py tests/security/test_path_traversal.py tests/security/test_privileged_catalog.py tests/security/test_seccomp_profiles.py tests/security/test_secret_absence.py tests/security/test_signature_failure.py\n..................................                                       [100%]\n34 passed in 0.53s\nsecurity: blocked; report=/home/rejean/work/koa-linux/.levelupdiag/koa-ci-evidence/security/security-gate-report.json\n', 'stderr_tail': '', 'referenced_gate_reports': [{'path': '.levelupdiag/koa-ci-evidence/security/security-gate-report.json', 'content_tail': '{\n  "authoritative": false,\n  "blocked_reasons": [\n    "KOA_QEMU_IMAGE is required for QEMU confinement validation",\n    "KOA_QEMU_EXPECTED_RELEASE_IDENTITY is required for QEMU confinement validation",\n    "KOA_QEMU_CONFINEMENT_READY_REGEX is required for QEMU confinement validation",\n    "KOA_QEMU
+[08:41:20]       ... 2059 evidence character(s) omitted by Control Panel presentation ...
+[08:41:20]       validation",\n        "KOA_QEMU_EXPECTED_RELEASE_IDENTITY is required for QEMU confinement validation",\n        "KOA_QEMU_CONFINEMENT_READY_REGEX is required for QEMU confinement validation",\n        "KOA_QEMU_GENERAL_SURFACE_DENIED_REGEX is required for QEMU confinement validation",\n        "KOA_QEMU_PRIVILEGE_PATH_DENIED_REGEX is required for QEMU confinement validation"\n      ]\n    }\n  ],\n  "environment": {\n    "implementation": "CPython",\n    "machine": "x86_64",\n    "platform": "linux",\n    "python": "3.13.15"\n  },\n  "evidence_type": "security_test",\n  "format_version": "1.0.0",\n  "full_gate": true,\n  "missing_paths": [],\n  "notes": [\n    "This report is candidate CI evidence only.",\n    "It does not authorize merge, release, signing, publication, or activation."\n  ],\n  "omitted_commands": [],\n  "outcome": "blocked",\n  "policy_digest": "b577fc14e3193bdd94f533551ea6917e287efededcd2f82b854f58a29ea76048",\n  "report_id": "sha256:ed1397541a2bc4d1ce7a369b28cad9643ffd0fe7bbed0168f1144eef3e363afe",\n  "report_kind": "ci_gate_candidate_evidence",\n  "repository_clean_before": false,\n  "required_paths": [\n    "docs/07-security/21-security-control-architecture.md",\n    "docs/contracts/security-controls.contract.json",\n    "tests/security",\n    "tests/security/test_break_glass.py",\n    "tests/security/test_capability_drop.py",\n    "tests/security/test_network_exposure.py",\n    "tests/security/test_path_traversal.py",\n    "tests/security/test_privileged_catalog.py",\n    "tests/security/test_qemu_appliance_confinement.py",\n    "tests/security/test_seccomp_profiles.py",\n    "tests/security/test_secret_absence.py",\n    "tests/security/test_signature_failure.py",\n    "tests/system/qemu-machine.toml",\n    "tests/system/qemu_harness.py"\n  ],\n  "scope": "all",\n  "source_recorded_at": "2026-09-16T12:59:11-04:00",\n  "source_revision": "7fecdeaed7d5b3bd9471c01316701e37e4d89127",\n  "suite_id": "security",\n  "test_type": "security"\n}\n'}]}
+[08:41:20]   N09 [BLOCKED] kOA-Linux validation reported BLOCKED (offline: blocked).
+[08:41:20]     recommendation: Inspect the captured kOA-Linux offline gate report to identify failures or unmet prerequisites.
+[08:41:20]     evidence (LevelUpDiag):
+[08:41:20]       {'argv': ['uv', 'run', '--frozen', 'python', 'ci/scripts/run-offline.py'], 'cwd': '/home/rejean/work/koa-linux', 'exit_code': 2, 'timed_out': False, 'duration_seconds': 0.567, 'stdout_tail': '[offline] $ /home/rejean/work/koa-linux/.venv/bin/python3 -m pytest -q --disable-warnings -p no:cacheprovider tests/offline/test_cached_artifacts.py tests/offline/test_network_loss.py tests/offline/test_no_undeclared_substitution.py tests/offline/test_offline_boot.py tests/offline/test_offline_import.py tests/offline/test_offline_navigation.py tests/profiles/test_sovereign_offline.py\n.....................                                                    [100%]\n21 passed in 0.12s\n[offline] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_release_sets.py\ncheck_release_sets: pass\n[offline] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_subsystem_alignment.py\nWARN: /home/rejean/work/koa-linux/docs/subsystems/ariane: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/konnaxion: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/orgo: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/sentient: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/semantik-architect: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/koa-spaces: reserved path is not mounted\ncheck_subsystem_alignment: pass\n[offline] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_artifact_contracts.py\ncheck_artifact_contracts: pass; schemas=46\noffline: blocked; report=/home/rejean/work/koa-linux/.levelupdiag/koa-ci-evidence/offline/offline-gate-report.json\n', 'stderr_tail': '', 'referenced_gate_reports': [{'path': '.levelupdiag/koa-ci-evidence/offline/offline-gate-report.json', 'content_tail': '{\n  "authoritative": false,\n  "blocked_reasons": [\n    "KOA_QEMU_IMAGE is required for offline QEMU validation",\n    "K
+[08:41:20]       ... 2090 evidence character(s) omitted by Control Panel presentation ...
+[08:41:20]       ],\n      "exit_code": 0,\n      "outcome": "passed"\n    },\n    {\n      "argv": [\n        "{python}",\n        "docs/tools/check_subsystem_alignment.py"\n      ],\n      "exit_code": 0,\n      "outcome": "passed"\n    },\n    {\n      "argv": [\n        "{python}",\n        "docs/tools/check_artifact_contracts.py"\n      ],\n      "exit_code": 0,\n      "outcome": "passed"\n    }\n  ],\n  "environment": {\n    "implementation": "CPython",\n    "machine": "x86_64",\n    "platform": "linux",\n    "python": "3.13.15",\n    "qemu_network": "disabled"\n  },\n  "evidence_type": "offline_operation_test",\n  "format_version": "1.0.0",\n  "full_gate": true,\n  "missing_paths": [],\n  "notes": [\n    "This report is candidate CI evidence only.",\n    "Offline QEMU validation always disables the VM network device.",\n    "It does not authorize merge, release, signing, publication, or activation."\n  ],\n  "omitted_commands": [],\n  "outcome": "blocked",\n  "policy_digest": "8f1b81fc9b4b3f7479d65f5537693d399a4eb5865aeaeb2832ec68a320d259af",\n  "report_id": "sha256:651c1f718f14984f11843df98050a8f643fa23c066f85e708af5ad1bb19a1fba",\n  "report_kind": "ci_gate_candidate_evidence",\n  "repository_clean_before": false,\n  "required_paths": [\n    "docs/08-operations/11-offline-operations.md",\n    "tests/offline",\n    "tests/offline/test_cached_artifacts.py",\n    "tests/offline/test_network_loss.py",\n    "tests/offline/test_no_undeclared_substitution.py",\n    "tests/offline/test_offline_boot.py",\n    "tests/offline/test_offline_import.py",\n    "tests/offline/test_offline_navigation.py",\n    "tests/offline/test_qemu_offline_navigation.py",\n    "tests/profiles/test_sovereign_offline.py",\n    "tests/system/qemu-machine.toml",\n    "tests/system/qemu_harness.py"\n  ],\n  "scope": "all",\n  "source_recorded_at": "2026-09-16T12:59:11-04:00",\n  "source_revision": "7fecdeaed7d5b3bd9471c01316701e37e4d89127",\n  "suite_id": "offline",\n  "test_type": "offline_operation"\n}\n'}]}
+[08:41:20]   N10 [BLOCKED] kOA-Linux validation reported BLOCKED (system: blocked).
+[08:41:20]     recommendation: Inspect the captured kOA-Linux system gate report to identify failures or unmet prerequisites.
+[08:41:20]     evidence (LevelUpDiag):
+[08:41:20]       {'argv': ['uv', 'run', '--frozen', 'python', 'ci/scripts/run-system-tests.py'], 'cwd': '/home/rejean/work/koa-linux', 'exit_code': 2, 'timed_out': False, 'duration_seconds': 1.99, 'stdout_tail': '[system] $ /home/rejean/work/koa-linux/.venv/bin/python3 -m pytest -q --disable-warnings -p no:cacheprovider tests/system/test_boot_verification.py tests/system/test_service_activation.py tests/system/test_health_aggregation.py tests/system/test_release_activation.py tests/system/test_last_known_good.py tests/system/test_backup_coordination.py tests/system/test_restore_coordination.py tests/system/test_appliance_session.py tests/system/test_third_party_store.py tests/system/test_native_workspace.py tests/system/test_native_workspace_package_set.py tests/system/test_rootfs_materialization.py tests/system/test_system_image_build.py tests/recovery/test_recovery_boot.py tests/recovery/test_restore_last_known_good.py tests/recovery/test_forward_repair.py tests/recovery/test_failed_activation.py tests/recovery/test_recovery_evidence.py\n................................................................         [100%]\n64 passed in 1.67s\nsystem: blocked; report=/home/rejean/work/koa-linux/.levelupdiag/koa-ci-evidence/system/system-gate-report.json\n', 'stderr_tail': '', 'referenced_gate_reports': [{'path': '.levelupdiag/koa-ci-evidence/system/system-gate-report.json', 'content_tail': '{\n  "authoritative": false,\n  "blocked_reasons": [\n    "KOA_QEMU_IMAGE is required for QEMU machine validation",\n    "KOA_QEMU_EXPECTED_RELEASE_IDENTITY is required for QEMU machine validation",\n    "KOA_QEMU_COMPOSITOR_READY_REGEX is required for QEMU machine validation",\n    "KOA_QEMU_SESSION_READY_REGEX is required for QEMU machine validation"\n  ],\n  "commands": [\n    {\n      "argv": [\n        "{python}",\n        "-m",\n        "pytest",\n        "-q",\n        "--disable-warnings",\n        "-p",\n        "no:cacheprovider",\n        "tests/system/test_boot_verification.py",\n        "
+[08:41:20]       ... 1615 evidence character(s) omitted by Control Panel presentation ...
+[08:41:20]       REGEX is required for QEMU machine validation"\n      ]\n    }\n  ],\n  "environment": {\n    "implementation": "CPython",\n    "machine": "x86_64",\n    "platform": "linux",\n    "python": "3.13.15"\n  },\n  "evidence_type": "automated_test_run",\n  "format_version": "1.0.0",\n  "full_gate": true,\n  "missing_paths": [],\n  "notes": [\n    "This report is candidate CI evidence only.",\n    "It does not authorize merge, release, signing, publication, or activation."\n  ],\n  "omitted_commands": [],\n  "outcome": "blocked",\n  "policy_digest": null,\n  "report_id": "sha256:a9f5194fcd155a28065ccdc8d2d93df0f44741972465286c6a6673bdef03cb0c",\n  "report_kind": "ci_gate_candidate_evidence",\n  "repository_clean_before": false,\n  "required_paths": [\n    "tests/recovery/test_failed_activation.py",\n    "tests/recovery/test_forward_repair.py",\n    "tests/recovery/test_recovery_boot.py",\n    "tests/recovery/test_recovery_evidence.py",\n    "tests/recovery/test_restore_last_known_good.py",\n    "tests/system/qemu-machine.toml",\n    "tests/system/qemu_harness.py",\n    "tests/system/test_appliance_session.py",\n    "tests/system/test_backup_coordination.py",\n    "tests/system/test_boot_verification.py",\n    "tests/system/test_health_aggregation.py",\n    "tests/system/test_last_known_good.py",\n    "tests/system/test_native_workspace.py",\n    "tests/system/test_native_workspace_package_set.py",\n    "tests/system/test_qemu_appliance_session.py",\n    "tests/system/test_qemu_boot.py",\n    "tests/system/test_release_activation.py",\n    "tests/system/test_restore_coordination.py",\n    "tests/system/test_rootfs_materialization.py",\n    "tests/system/test_service_activation.py",\n    "tests/system/test_system_image_build.py",\n    "tests/system/test_third_party_store.py"\n  ],\n  "scope": "all",\n  "source_recorded_at": "2026-09-16T12:59:11-04:00",\n  "source_revision": "7fecdeaed7d5b3bd9471c01316701e37e4d89127",\n  "suite_id": "system",\n  "test_type": "system"\n}\n'}]}
+[08:41:20] > Assemble deployment plan
+[08:41:20]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[08:41:20] warning: `VIRTUAL_ENV=.venv` does not match the project environment path `assembly/.venv` and will be ignored; use `--active` to target the active environment instead
+[08:41:20] Using CPython 3.13.15
+[08:41:20] Creating virtual environment at: assembly/.venv
+[08:41:21]    Building koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[08:41:22]       Built koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[08:41:22] Installed 7 packages in 10ms
+[08:41:22] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[08:41:22] usage: koa assemble [-h] [--repository-root REPOSITORY_ROOT] [--dry-run]
+[08:41:22]                     [--verbose]
+[08:41:22]                     --profile {user-lightweight,developer-linux-workstation,developer-windows-wsl,sovereign-linux-node,sovereign-hub,build-farm,control-plane,high-assurance,sovereign-offline,appliance-shell}
+[08:41:22]                     [--overlay {high-assurance,sovereign-offline,appliance-shell}]
+[08:41:22]                     --renderer {systemd,quadlet,compose,kubernetes,image,offline-bundle}
+[08:41:22]                     [--plan PLAN]
+[08:41:22]                     [--effective-profile-output EFFECTIVE_PROFILE_OUTPUT]
+[08:41:22]                     [--settings SETTINGS] --output OUTPUT [--check]
+[08:41:22] koa assemble: error: required input for render resolved plan as systemd does not exist: generated/profiles/sovereign_linux_node/resolved-plan.json
+[08:41:22] ERROR Assemble deployment plan -> exit 2
+[08:52:12] DEBUG PRINCIPAL complete; formal conformance findings are non-blocking in DEBUG
+[09:19:05] Diagnostic context: wsl; target={home}/work/koa-linux
+[09:19:07] > LevelUpDiag campaign: validation
+[09:19:07]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:19:26] LevelUpDiag validation [VALIDATION]: WARN
+[09:19:26]   Diagnostic execution: PASS
+[09:19:26]   System testability:    PARTIAL
+[09:19:26]   Qualification scope:  full_target
+[09:19:26]   Deferred subsystems:   none
+[09:19:26]   Conformance:           WARN
+[09:19:26]   N00  PASS         Diagnostic Integrity
+[09:19:26]   N01  PASS         Environment
+[09:19:26]   N02  WARN         Repository / Structure
+[09:19:26]   N03  PASS         Documentation
+[09:19:26]   N04  PASS         Contracts
+[09:19:26]   N05  PASS         Components
+[09:19:26]   N06  SKIP         Integrations
+[09:19:26]   N07  PASS         Profiles
+[09:19:26]   N08  BLOCKED      Security Runtime
+[09:19:26]   N09  BLOCKED      Offline Runtime
+[09:19:26]   N10  BLOCKED      System Runtime
+[09:19:26] Report: /home/rejean/work/koa-linux/.levelupdiag/runs/20260919T131907Z-a9df9444/summary.json
+[09:19:26] OK LevelUpDiag campaign: validation -> exit 0
+[09:19:29]   N02 [WARN] Git worktree contains local changes; this is advisory and does not block DEBUG.
+[09:19:29]     recommendation: Review local changes before VALIDATION/RELEASE if provenance matters.
+[09:19:29]     evidence (LevelUpDiag):
+[09:19:29]       M .koa/runtime-paths.json
+[09:19:29]        M README.md
+[09:19:29]        M ci/scripts/run-offline.py
+[09:19:29]        M ci/scripts/run-security.py
+[09:19:29]        M ci/scripts/run-system-tests.py
+[09:19:29]        D docs/CODE_SNAPSHOT_MANIFEST.md
+[09:19:29]        M docs/generated/ai-context/koa-navigation.json
+[09:19:29]        M docs/generated/ai-context/subsystem-ariane.json
+[09:19:29]        M docs/generated/ai-context/subsystem-koa_spaces.json
+[09:19:29]        M docs/generated/ai-context/subsystem-konnaxion.json
+[09:19:29]        M docs/generated/ai-context/subsystem-orgo.json
+[09:19:29]        M docs/generated/ai-context/subsystem-semantik_architect.json
+[09:19:29]        M docs/generated/ai-context/subsystem-sentient.json
+[09:19:29]        M docs/generated/document-index.json
+[09:19:29]        M docs/generated/document-index.md
+[09:19:29]        M docs/tools/_contract_first.py
+[09:19:29]        M host/image/package-sets/user-lightweight.yaml
+[09:19:29]       ?? CODE_SNAPSHOT_MANIFEST.md
+[09:19:29]       ?? assembly/uv.lock
+[09:19:29]       ?? ci/UPDATE_20260919.md
+[09:19:29]       ?? ci/UPDATE_FILES_20260919.json
+[09:19:29]       ?? ci/scripts/gate_scope.py
+[09:19:29]       ?? ci/tests/
+[09:19:29]       ?? host/store/
+[09:19:29]       ?? profiles/native-applications/admission/koali-essentials.json
+[09:19:29]       ?? profiles/native-applications/admission/koali-store.json
+[09:19:29]       ?? profiles/native-applications/data/koali-essentials.json
+[09:19:29]       ?? profiles/native-applications/data/koali-store.json
+[09:19:29]       ?? tests/system/test_third_party_store.py
+[09:19:29]   N06 [SKIP] Optional kOA-Linux command 'integrations' is not configured; level skipped.
+[09:19:29]   N08 [BLOCKED] kOA-Linux validation reported BLOCKED (security: blocked).
+[09:19:29]     recommendation: Inspect the captured kOA-Linux security gate report to identify failures or unmet prerequisites.
+[09:19:29]     evidence (LevelUpDiag):
+[09:19:29]       {'argv': ['uv', 'run', '--frozen', 'python', 'ci/scripts/run-security.py'], 'cwd': '/home/rejean/work/koa-linux', 'exit_code': 2, 'timed_out': False, 'duration_seconds': 2.223, 'stdout_tail': '[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_security_architecture.py\ncheck_security_architecture: pass; controls=48; profiles=10; invariants=8\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_ai_boundary.py\ncheck_ai_boundary: pass\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_component_boundaries.py\ncheck_component_boundaries: pass\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_canonical_ownership.py\ncheck_canonical_ownership: pass\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_uckk_external_boundary.py\ncheck_uckk_external_boundary: pass; findings=0\n[security] $ /home/rejean/work/koa-linux/.venv/bin/python3 -m pytest -q --disable-warnings -p no:cacheprovider tests/security/test_break_glass.py tests/security/test_capability_drop.py tests/security/test_network_exposure.py tests/security/test_path_traversal.py tests/security/test_privileged_catalog.py tests/security/test_seccomp_profiles.py tests/security/test_secret_absence.py tests/security/test_signature_failure.py\n..................................                                       [100%]\n34 passed in 0.65s\nsecurity: blocked; report=/home/rejean/work/koa-linux/.levelupdiag/koa-ci-evidence/security/security-gate-report.json\n', 'stderr_tail': '', 'referenced_gate_reports': [{'path': '.levelupdiag/koa-ci-evidence/security/security-gate-report.json', 'content_tail': '{\n  "authoritative": false,\n  "blocked_reasons": [\n    "KOA_QEMU_IMAGE is required for QEMU confinement validation",\n    "KOA_QEMU_EXPECTED_RELEASE_IDENTITY is required for QEMU confinement validation",\n    "KOA_QEMU_CONFINEMENT_READY_REGEX is required for QEMU confinement validation",\n    "KOA_QEMU
+[09:19:29]       ... 2059 evidence character(s) omitted by Control Panel presentation ...
+[09:19:29]       validation",\n        "KOA_QEMU_EXPECTED_RELEASE_IDENTITY is required for QEMU confinement validation",\n        "KOA_QEMU_CONFINEMENT_READY_REGEX is required for QEMU confinement validation",\n        "KOA_QEMU_GENERAL_SURFACE_DENIED_REGEX is required for QEMU confinement validation",\n        "KOA_QEMU_PRIVILEGE_PATH_DENIED_REGEX is required for QEMU confinement validation"\n      ]\n    }\n  ],\n  "environment": {\n    "implementation": "CPython",\n    "machine": "x86_64",\n    "platform": "linux",\n    "python": "3.13.15"\n  },\n  "evidence_type": "security_test",\n  "format_version": "1.0.0",\n  "full_gate": true,\n  "missing_paths": [],\n  "notes": [\n    "This report is candidate CI evidence only.",\n    "It does not authorize merge, release, signing, publication, or activation."\n  ],\n  "omitted_commands": [],\n  "outcome": "blocked",\n  "policy_digest": "b577fc14e3193bdd94f533551ea6917e287efededcd2f82b854f58a29ea76048",\n  "report_id": "sha256:ed1397541a2bc4d1ce7a369b28cad9643ffd0fe7bbed0168f1144eef3e363afe",\n  "report_kind": "ci_gate_candidate_evidence",\n  "repository_clean_before": false,\n  "required_paths": [\n    "docs/07-security/21-security-control-architecture.md",\n    "docs/contracts/security-controls.contract.json",\n    "tests/security",\n    "tests/security/test_break_glass.py",\n    "tests/security/test_capability_drop.py",\n    "tests/security/test_network_exposure.py",\n    "tests/security/test_path_traversal.py",\n    "tests/security/test_privileged_catalog.py",\n    "tests/security/test_qemu_appliance_confinement.py",\n    "tests/security/test_seccomp_profiles.py",\n    "tests/security/test_secret_absence.py",\n    "tests/security/test_signature_failure.py",\n    "tests/system/qemu-machine.toml",\n    "tests/system/qemu_harness.py"\n  ],\n  "scope": "all",\n  "source_recorded_at": "2026-09-16T12:59:11-04:00",\n  "source_revision": "7fecdeaed7d5b3bd9471c01316701e37e4d89127",\n  "suite_id": "security",\n  "test_type": "security"\n}\n'}]}
+[09:19:29]   N09 [BLOCKED] kOA-Linux validation reported BLOCKED (offline: blocked).
+[09:19:29]     recommendation: Inspect the captured kOA-Linux offline gate report to identify failures or unmet prerequisites.
+[09:19:29]     evidence (LevelUpDiag):
+[09:19:29]       {'argv': ['uv', 'run', '--frozen', 'python', 'ci/scripts/run-offline.py'], 'cwd': '/home/rejean/work/koa-linux', 'exit_code': 2, 'timed_out': False, 'duration_seconds': 0.605, 'stdout_tail': '[offline] $ /home/rejean/work/koa-linux/.venv/bin/python3 -m pytest -q --disable-warnings -p no:cacheprovider tests/offline/test_cached_artifacts.py tests/offline/test_network_loss.py tests/offline/test_no_undeclared_substitution.py tests/offline/test_offline_boot.py tests/offline/test_offline_import.py tests/offline/test_offline_navigation.py tests/profiles/test_sovereign_offline.py\n.....................                                                    [100%]\n21 passed in 0.11s\n[offline] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_release_sets.py\ncheck_release_sets: pass\n[offline] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_subsystem_alignment.py\nWARN: /home/rejean/work/koa-linux/docs/subsystems/ariane: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/konnaxion: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/orgo: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/sentient: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/semantik-architect: reserved path is not mounted\nWARN: /home/rejean/work/koa-linux/docs/subsystems/koa-spaces: reserved path is not mounted\ncheck_subsystem_alignment: pass\n[offline] $ /home/rejean/work/koa-linux/.venv/bin/python3 docs/tools/check_artifact_contracts.py\ncheck_artifact_contracts: pass; schemas=46\noffline: blocked; report=/home/rejean/work/koa-linux/.levelupdiag/koa-ci-evidence/offline/offline-gate-report.json\n', 'stderr_tail': '', 'referenced_gate_reports': [{'path': '.levelupdiag/koa-ci-evidence/offline/offline-gate-report.json', 'content_tail': '{\n  "authoritative": false,\n  "blocked_reasons": [\n    "KOA_QEMU_IMAGE is required for offline QEMU validation",\n    "K
+[09:19:29]       ... 2090 evidence character(s) omitted by Control Panel presentation ...
+[09:19:29]       ],\n      "exit_code": 0,\n      "outcome": "passed"\n    },\n    {\n      "argv": [\n        "{python}",\n        "docs/tools/check_subsystem_alignment.py"\n      ],\n      "exit_code": 0,\n      "outcome": "passed"\n    },\n    {\n      "argv": [\n        "{python}",\n        "docs/tools/check_artifact_contracts.py"\n      ],\n      "exit_code": 0,\n      "outcome": "passed"\n    }\n  ],\n  "environment": {\n    "implementation": "CPython",\n    "machine": "x86_64",\n    "platform": "linux",\n    "python": "3.13.15",\n    "qemu_network": "disabled"\n  },\n  "evidence_type": "offline_operation_test",\n  "format_version": "1.0.0",\n  "full_gate": true,\n  "missing_paths": [],\n  "notes": [\n    "This report is candidate CI evidence only.",\n    "Offline QEMU validation always disables the VM network device.",\n    "It does not authorize merge, release, signing, publication, or activation."\n  ],\n  "omitted_commands": [],\n  "outcome": "blocked",\n  "policy_digest": "8f1b81fc9b4b3f7479d65f5537693d399a4eb5865aeaeb2832ec68a320d259af",\n  "report_id": "sha256:651c1f718f14984f11843df98050a8f643fa23c066f85e708af5ad1bb19a1fba",\n  "report_kind": "ci_gate_candidate_evidence",\n  "repository_clean_before": false,\n  "required_paths": [\n    "docs/08-operations/11-offline-operations.md",\n    "tests/offline",\n    "tests/offline/test_cached_artifacts.py",\n    "tests/offline/test_network_loss.py",\n    "tests/offline/test_no_undeclared_substitution.py",\n    "tests/offline/test_offline_boot.py",\n    "tests/offline/test_offline_import.py",\n    "tests/offline/test_offline_navigation.py",\n    "tests/offline/test_qemu_offline_navigation.py",\n    "tests/profiles/test_sovereign_offline.py",\n    "tests/system/qemu-machine.toml",\n    "tests/system/qemu_harness.py"\n  ],\n  "scope": "all",\n  "source_recorded_at": "2026-09-16T12:59:11-04:00",\n  "source_revision": "7fecdeaed7d5b3bd9471c01316701e37e4d89127",\n  "suite_id": "offline",\n  "test_type": "offline_operation"\n}\n'}]}
+[09:19:29]   N10 [BLOCKED] kOA-Linux validation reported BLOCKED (system: blocked).
+[09:19:29]     recommendation: Inspect the captured kOA-Linux system gate report to identify failures or unmet prerequisites.
+[09:19:29]     evidence (LevelUpDiag):
+[09:19:29]       {'argv': ['uv', 'run', '--frozen', 'python', 'ci/scripts/run-system-tests.py'], 'cwd': '/home/rejean/work/koa-linux', 'exit_code': 2, 'timed_out': False, 'duration_seconds': 1.957, 'stdout_tail': '[system] $ /home/rejean/work/koa-linux/.venv/bin/python3 -m pytest -q --disable-warnings -p no:cacheprovider tests/system/test_boot_verification.py tests/system/test_service_activation.py tests/system/test_health_aggregation.py tests/system/test_release_activation.py tests/system/test_last_known_good.py tests/system/test_backup_coordination.py tests/system/test_restore_coordination.py tests/system/test_appliance_session.py tests/system/test_third_party_store.py tests/system/test_native_workspace.py tests/system/test_native_workspace_package_set.py tests/system/test_rootfs_materialization.py tests/system/test_system_image_build.py tests/recovery/test_recovery_boot.py tests/recovery/test_restore_last_known_good.py tests/recovery/test_forward_repair.py tests/recovery/test_failed_activation.py tests/recovery/test_recovery_evidence.py\n................................................................         [100%]\n64 passed in 1.64s\nsystem: blocked; report=/home/rejean/work/koa-linux/.levelupdiag/koa-ci-evidence/system/system-gate-report.json\n', 'stderr_tail': '', 'referenced_gate_reports': [{'path': '.levelupdiag/koa-ci-evidence/system/system-gate-report.json', 'content_tail': '{\n  "authoritative": false,\n  "blocked_reasons": [\n    "KOA_QEMU_IMAGE is required for QEMU machine validation",\n    "KOA_QEMU_EXPECTED_RELEASE_IDENTITY is required for QEMU machine validation",\n    "KOA_QEMU_COMPOSITOR_READY_REGEX is required for QEMU machine validation",\n    "KOA_QEMU_SESSION_READY_REGEX is required for QEMU machine validation"\n  ],\n  "commands": [\n    {\n      "argv": [\n        "{python}",\n        "-m",\n        "pytest",\n        "-q",\n        "--disable-warnings",\n        "-p",\n        "no:cacheprovider",\n        "tests/system/test_boot_verification.py",\n
+[09:19:29]       ... 1616 evidence character(s) omitted by Control Panel presentation ...
+[09:19:29]       REGEX is required for QEMU machine validation"\n      ]\n    }\n  ],\n  "environment": {\n    "implementation": "CPython",\n    "machine": "x86_64",\n    "platform": "linux",\n    "python": "3.13.15"\n  },\n  "evidence_type": "automated_test_run",\n  "format_version": "1.0.0",\n  "full_gate": true,\n  "missing_paths": [],\n  "notes": [\n    "This report is candidate CI evidence only.",\n    "It does not authorize merge, release, signing, publication, or activation."\n  ],\n  "omitted_commands": [],\n  "outcome": "blocked",\n  "policy_digest": null,\n  "report_id": "sha256:a9f5194fcd155a28065ccdc8d2d93df0f44741972465286c6a6673bdef03cb0c",\n  "report_kind": "ci_gate_candidate_evidence",\n  "repository_clean_before": false,\n  "required_paths": [\n    "tests/recovery/test_failed_activation.py",\n    "tests/recovery/test_forward_repair.py",\n    "tests/recovery/test_recovery_boot.py",\n    "tests/recovery/test_recovery_evidence.py",\n    "tests/recovery/test_restore_last_known_good.py",\n    "tests/system/qemu-machine.toml",\n    "tests/system/qemu_harness.py",\n    "tests/system/test_appliance_session.py",\n    "tests/system/test_backup_coordination.py",\n    "tests/system/test_boot_verification.py",\n    "tests/system/test_health_aggregation.py",\n    "tests/system/test_last_known_good.py",\n    "tests/system/test_native_workspace.py",\n    "tests/system/test_native_workspace_package_set.py",\n    "tests/system/test_qemu_appliance_session.py",\n    "tests/system/test_qemu_boot.py",\n    "tests/system/test_release_activation.py",\n    "tests/system/test_restore_coordination.py",\n    "tests/system/test_rootfs_materialization.py",\n    "tests/system/test_service_activation.py",\n    "tests/system/test_system_image_build.py",\n    "tests/system/test_third_party_store.py"\n  ],\n  "scope": "all",\n  "source_recorded_at": "2026-09-16T12:59:11-04:00",\n  "source_revision": "7fecdeaed7d5b3bd9471c01316701e37e4d89127",\n  "suite_id": "system",\n  "test_type": "system"\n}\n'}]}
+[09:19:29] > Assemble deployment plan
+[09:19:29]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:19:29] warning: `VIRTUAL_ENV=.venv` does not match the project environment path `assembly/.venv` and will be ignored; use `--active` to target the active environment instead
+[09:19:30] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[09:19:30] usage: koa assemble [-h] [--repository-root REPOSITORY_ROOT] [--dry-run]
+[09:19:30]                     [--verbose]
+[09:19:30]                     --profile {user-lightweight,developer-linux-workstation,developer-windows-wsl,sovereign-linux-node,sovereign-hub,build-farm,control-plane,high-assurance,sovereign-offline,appliance-shell}
+[09:19:30]                     [--overlay {high-assurance,sovereign-offline,appliance-shell}]
+[09:19:30]                     --renderer {systemd,quadlet,compose,kubernetes,image,offline-bundle}
+[09:19:30]                     [--plan PLAN]
+[09:19:30]                     [--effective-profile-output EFFECTIVE_PROFILE_OUTPUT]
+[09:19:30]                     [--settings SETTINGS] --output OUTPUT [--check]
+[09:19:30] koa assemble: error: required input for render resolved plan as systemd does not exist: generated/profiles/sovereign_linux_node/resolved-plan.json
+[09:19:30] ERROR Assemble deployment plan -> exit 2
+[09:19:45] > Generate Effective Profile: sovereign-linux-node
+[09:19:45]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:19:46] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[09:19:46] OK Generate Effective Profile: sovereign-linux-node -> exit 0
+[09:19:56] Discovered 8 component build targets
+[09:20:01] SOURCE_DATE_EPOCH = 1789577951
+[09:21:42] > Build Component: audit-broker
+[09:21:42]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:21:42] koa build-component: component build requires a clean source worktree
+[09:21:42] ERROR Build Component: audit-broker -> exit 2
+[09:21:42] Build All Components stopped at audit-broker
+[09:27:10] > Refresh workspace koa-linux-main
+[09:27:10]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:27:34] Previous workspace preserved: /home/rejean/work/.koali-control-backups/koa-linux-20260919T132711Z-441
+[09:27:34] Workspace imported: /home/rejean/work/koa-linux
+[09:27:34] Source fingerprint recorded: 63e3c06ddfef169f0a7ce0b7ec1aaf38eb8e8ac4604289b76faf91b72642cf2c
+[09:27:35] OK Refresh workspace koa-linux-main -> exit 0
+[09:27:47] > Generate Effective Profile: sovereign-linux-node
+[09:27:47]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:27:47] Using CPython 3.13.15
+[09:27:47] Creating virtual environment at: assembly/.venv
+[09:27:47]    Building koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[09:27:47]       Built koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[09:27:47] Installed 7 packages in 14ms
+[09:27:48] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[09:27:48] OK Generate Effective Profile: sovereign-linux-node -> exit 0
+[09:27:51] Discovered 8 component build targets
+[09:28:14] SOURCE_DATE_EPOCH = 1789824089
+[09:28:22] > Build Component: audit-broker
+[09:28:22]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:28:22] koa build-component: component build requires a clean source worktree
+[09:28:22] ERROR Build Component: audit-broker -> exit 2
+[09:28:22] Build All Components stopped at audit-broker
+[09:30:43] > Build Component: audit-broker
+[09:30:43]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:30:44] koa build-component: process exited with code 2: uv build --offline --no-cache --no-python-downloads --no-build-isolation --no-create-gitignore --wheel --out-dir /tmp/.koa-build-audit-broker-1u8nclvd/wheel components/audit-broker
+[09:30:44] ERROR Build Component: audit-broker -> exit 2
+[09:30:44] Build All Components stopped at audit-broker
+[09:46:29] Koali Control Panel 4.1.1 started
+[09:48:16] > Generate Effective Profile: sovereign-linux-node
+[09:48:16]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:17] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[09:48:17] OK Generate Effective Profile: sovereign-linux-node -> exit 0
+[09:48:18] > Clean transient assembly UV lock
+[09:48:18]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:18] OK Clean transient assembly UV lock -> exit 0
+[09:48:18] Removed transient untracked assembly/uv.lock so strict component builds keep a clean source worktree
+[09:48:24] Discovered 8 component build targets
+[09:48:30] SOURCE_DATE_EPOCH = 1789824089
+[09:48:35] > Prepare Component Build Environment
+[09:48:35]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:35]    Building koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[09:48:35]    Building koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[09:48:35]    Building koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[09:48:35]    Building koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[09:48:35]       Built koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[09:48:35]       Built koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[09:48:35]       Built koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[09:48:36]       Built koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[09:48:36] Prepared 4 packages in 941ms
+[09:48:36] Installed 30 packages in 93ms
+[09:48:36]  + attrs==26.1.0
+[09:48:36]  + cfgv==3.4.0
+[09:48:36]  + distlib==0.4.0
+[09:48:36]  + filelock==3.20.0
+[09:48:36]  + identify==2.6.15
+[09:48:36]  + iniconfig==2.1.0
+[09:48:36]  + jsonschema==4.26.0
+[09:48:36]  + jsonschema-specifications==2025.9.1
+[09:48:36]  + koa-interfaces==1.0.0 (from file:///home/rejean/work/koa-linux/interfaces/python)
+[09:48:36]  + koa-konnaxion-adapter==0.1.0 (from file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter)
+[09:48:36]  + koa-resource-governor==1.0.0 (from file:///home/rejean/work/koa-linux/components/resource-governor)
+[09:48:36]  + koa-sentient-adapter==1.0.0 (from file:///home/rejean/work/koa-linux/integrations/sentient/adapter)
+[09:48:36]  + mypy==1.17.1
+[09:48:36]  + mypy-extensions==1.1.0
+[09:48:36]  + nodeenv==1.9.1
+[09:48:36]  + packaging==25.0
+[09:48:36]  + pathspec==0.12.1
+[09:48:36]  + platformdirs==4.5.0
+[09:48:36]  + pluggy==1.6.0
+[09:48:36]  + pre-commit==4.3.0
+[09:48:36]  + pygments==2.19.2
+[09:48:36]  + pytest==9.0.3
+[09:48:36]  + pyyaml==6.0.3
+[09:48:36]  + referencing==0.37.0
+[09:48:36]  + rpds-py==2026.6.3
+[09:48:36]  + ruff==0.12.12
+[09:48:36]  + setuptools==82.0.1
+[09:48:36]  + typing-extensions==4.15.0
+[09:48:36]  + virtualenv==20.35.3
+[09:48:36]  + wheel==0.48.0
+[09:48:36] OK Prepare Component Build Environment -> exit 0
+[09:48:36] Component build environment READY: frozen all-groups sync complete; source worktree clean
+[09:48:37] > Build Component: audit-broker
+[09:48:37]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:38] OK Build Component: audit-broker -> exit 0
+[09:48:38] > Build Component: governance-policy-runtime
+[09:48:38]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:39] OK Build Component: governance-policy-runtime -> exit 0
+[09:48:39] > Build Component: identity-and-trust
+[09:48:39]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:40] OK Build Component: identity-and-trust -> exit 0
+[09:48:40] > Build Component: koa-mediatheque
+[09:48:40]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:41] OK Build Component: koa-mediatheque -> exit 0
+[09:48:41] > Build Component: koa-node-agent
+[09:48:41]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:51] OK Build Component: koa-node-agent -> exit 0
+[09:48:51] > Build Component: kristal-runtime
+[09:48:51]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:52] OK Build Component: kristal-runtime -> exit 0
+[09:48:52] > Build Component: publication-gateway
+[09:48:52]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:53] OK Build Component: publication-gateway -> exit 0
+[09:48:53] > Build Component: resource-governor
+[09:48:53]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:48:54] OK Build Component: resource-governor -> exit 0
+[09:48:54] Build All Components complete
+[09:51:13] DEBUG PRINCIPAL complete; formal conformance findings are non-blocking in DEBUG
+[09:51:50] > Generate Effective Profile: sovereign-linux-node
+[09:51:50]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:51:51] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[09:51:51] OK Generate Effective Profile: sovereign-linux-node -> exit 0
+[09:51:51] > Clean transient assembly UV lock
+[09:51:51]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[09:51:52] OK Clean transient assembly UV lock -> exit 0
+[09:51:52] Removed transient untracked assembly/uv.lock so strict component builds keep a clean source worktree
+[09:52:04] DEBUG PRINCIPAL complete; formal conformance findings are non-blocking in DEBUG
+[10:29:13] > Refresh workspace koa-linux-main
+[10:29:13]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:29:35] Another action is already running
+[10:29:36] Previous workspace preserved: /home/rejean/work/.koali-control-backups/koa-linux-20260919T142914Z-435
+[10:29:36] Workspace imported: /home/rejean/work/koa-linux
+[10:29:36] Source fingerprint recorded: 3c2e252352230ab90c1c9f458da700cffbd45904307f3f093326037eebdaa26d
+[10:29:36] OK Refresh workspace koa-linux-main -> exit 0
+[10:29:45] DEBUG PRINCIPAL complete; formal conformance findings are non-blocking in DEBUG
+[10:30:33] > Generate Effective Profile: sovereign-linux-node
+[10:30:33]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:30:33] Using CPython 3.13.15
+[10:30:33] Creating virtual environment at: assembly/.venv
+[10:30:34]    Building koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[10:30:34]       Built koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[10:30:34] Installed 7 packages in 13ms
+[10:30:34] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[10:30:34] OK Generate Effective Profile: sovereign-linux-node -> exit 0
+[10:30:35] > Clean transient assembly UV lock
+[10:30:35]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:30:35] OK Clean transient assembly UV lock -> exit 0
+[10:30:35] Removed transient untracked assembly/uv.lock so strict component builds keep a clean source worktree
+[10:30:42] Discovered 8 component build targets
+[10:30:49] SOURCE_DATE_EPOCH = 1789828129
+[10:30:54] > Prepare Component Build Environment
+[10:30:54]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:30:54]    Building koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[10:30:54]    Building koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[10:30:54]    Building koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[10:30:54]    Building koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[10:30:54]       Built koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[10:30:54]       Built koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[10:30:54]       Built koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[10:30:55]       Built koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[10:30:55] Prepared 4 packages in 821ms
+[10:30:55] Installed 30 packages in 85ms
+[10:30:55]  + attrs==26.1.0
+[10:30:55]  + cfgv==3.4.0
+[10:30:55]  + distlib==0.4.0
+[10:30:55]  + filelock==3.20.0
+[10:30:55]  + identify==2.6.15
+[10:30:55]  + iniconfig==2.1.0
+[10:30:55]  + jsonschema==4.26.0
+[10:30:55]  + jsonschema-specifications==2025.9.1
+[10:30:55]  + koa-interfaces==1.0.0 (from file:///home/rejean/work/koa-linux/interfaces/python)
+[10:30:55]  + koa-konnaxion-adapter==0.1.0 (from file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter)
+[10:30:55]  + koa-resource-governor==1.0.0 (from file:///home/rejean/work/koa-linux/components/resource-governor)
+[10:30:55]  + koa-sentient-adapter==1.0.0 (from file:///home/rejean/work/koa-linux/integrations/sentient/adapter)
+[10:30:55]  + mypy==1.17.1
+[10:30:55]  + mypy-extensions==1.1.0
+[10:30:55]  + nodeenv==1.9.1
+[10:30:55]  + packaging==25.0
+[10:30:55]  + pathspec==0.12.1
+[10:30:55]  + platformdirs==4.5.0
+[10:30:55]  + pluggy==1.6.0
+[10:30:55]  + pre-commit==4.3.0
+[10:30:55]  + pygments==2.19.2
+[10:30:55]  + pytest==9.0.3
+[10:30:55]  + pyyaml==6.0.3
+[10:30:55]  + referencing==0.37.0
+[10:30:55]  + rpds-py==2026.6.3
+[10:30:55]  + ruff==0.12.12
+[10:30:55]  + setuptools==82.0.1
+[10:30:55]  + typing-extensions==4.15.0
+[10:30:55]  + virtualenv==20.35.3
+[10:30:55]  + wheel==0.48.0
+[10:30:55] OK Prepare Component Build Environment -> exit 0
+[10:30:56] Component build environment READY: frozen all-groups sync complete; source worktree clean
+[10:30:57] > Build Component: audit-broker
+[10:30:57]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:30:58] OK Build Component: audit-broker -> exit 0
+[10:30:58] > Build Component: governance-policy-runtime
+[10:30:58]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:30:59] OK Build Component: governance-policy-runtime -> exit 0
+[10:30:59] > Build Component: identity-and-trust
+[10:30:59]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:31:00] OK Build Component: identity-and-trust -> exit 0
+[10:31:00] > Build Component: koa-mediatheque
+[10:31:00]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:31:01] OK Build Component: koa-mediatheque -> exit 0
+[10:31:01] > Build Component: koa-node-agent
+[10:31:01]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:31:11] OK Build Component: koa-node-agent -> exit 0
+[10:31:11] > Build Component: kristal-runtime
+[10:31:11]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:31:12] OK Build Component: kristal-runtime -> exit 0
+[10:31:12] > Build Component: publication-gateway
+[10:31:12]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:31:13] OK Build Component: publication-gateway -> exit 0
+[10:31:13] > Build Component: resource-governor
+[10:31:13]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[10:31:14] OK Build Component: resource-governor -> exit 0
+[10:31:14] Build All Components complete
+[10:31:30] DEBUG PRINCIPAL complete; formal conformance findings are non-blocking in DEBUG
+[11:49:11] > Refresh workspace koa-linux-main
+[11:49:11]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:49:17] Another action is already running
+[11:49:33] Another action is already running
+[11:49:34] Previous workspace preserved: /home/rejean/work/.koali-control-backups/koa-linux-20260919T154912Z-433
+[11:49:34] Workspace imported: /home/rejean/work/koa-linux
+[11:49:34] Source fingerprint recorded: f8ff9c8156fe7e2bbb9b74cad6597592c58131536b5ccd1f6be82410c4d76072
+[11:49:34] OK Refresh workspace koa-linux-main -> exit 0
+[11:50:29] Koali Control Panel 4.1.1 started
+[11:50:43] > Refresh workspace koa-linux-main
+[11:50:43]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:51:06] Previous workspace preserved: /home/rejean/work/.koali-control-backups/koa-linux-20260919T155043Z-500
+[11:51:06] Workspace imported: /home/rejean/work/koa-linux
+[11:51:06] Source fingerprint recorded: f8ff9c8156fe7e2bbb9b74cad6597592c58131536b5ccd1f6be82410c4d76072
+[11:51:06] OK Refresh workspace koa-linux-main -> exit 0
+[11:51:11] > Generate Effective Profile: sovereign-linux-node
+[11:51:11]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:51:11] Using CPython 3.13.15
+[11:51:11] Creating virtual environment at: assembly/.venv
+[11:51:11]    Building koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[11:51:11]       Built koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[11:51:11] Installed 7 packages in 12ms
+[11:51:12] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[11:51:12] OK Generate Effective Profile: sovereign-linux-node -> exit 0
+[11:52:16] Discovered 8 component build targets
+[11:53:05] SOURCE_DATE_EPOCH = 1789832934
+[11:53:09] > Prepare Component Build Environment
+[11:53:09]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:53:09]    Building koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[11:53:09]    Building koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[11:53:09]    Building koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[11:53:09]    Building koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[11:53:10]       Built koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[11:53:10]       Built koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[11:53:10]       Built koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[11:53:10]       Built koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[11:53:10] Prepared 4 packages in 946ms
+[11:53:10] Installed 30 packages in 94ms
+[11:53:10]  + attrs==26.1.0
+[11:53:10]  + cfgv==3.4.0
+[11:53:10]  + distlib==0.4.0
+[11:53:10]  + filelock==3.20.0
+[11:53:10]  + identify==2.6.15
+[11:53:10]  + iniconfig==2.1.0
+[11:53:10]  + jsonschema==4.26.0
+[11:53:10]  + jsonschema-specifications==2025.9.1
+[11:53:10]  + koa-interfaces==1.0.0 (from file:///home/rejean/work/koa-linux/interfaces/python)
+[11:53:10]  + koa-konnaxion-adapter==0.1.0 (from file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter)
+[11:53:10]  + koa-resource-governor==1.0.0 (from file:///home/rejean/work/koa-linux/components/resource-governor)
+[11:53:10]  + koa-sentient-adapter==1.0.0 (from file:///home/rejean/work/koa-linux/integrations/sentient/adapter)
+[11:53:10]  + mypy==1.17.1
+[11:53:10]  + mypy-extensions==1.1.0
+[11:53:10]  + nodeenv==1.9.1
+[11:53:10]  + packaging==25.0
+[11:53:10]  + pathspec==0.12.1
+[11:53:10]  + platformdirs==4.5.0
+[11:53:10]  + pluggy==1.6.0
+[11:53:10]  + pre-commit==4.3.0
+[11:53:10]  + pygments==2.19.2
+[11:53:10]  + pytest==9.0.3
+[11:53:10]  + pyyaml==6.0.3
+[11:53:10]  + referencing==0.37.0
+[11:53:10]  + rpds-py==2026.6.3
+[11:53:10]  + ruff==0.12.12
+[11:53:10]  + setuptools==82.0.1
+[11:53:10]  + typing-extensions==4.15.0
+[11:53:10]  + virtualenv==20.35.3
+[11:53:10]  + wheel==0.48.0
+[11:53:10] OK Prepare Component Build Environment -> exit 0
+[11:53:12] Component build environment READY: frozen all-groups sync complete; source worktree clean
+[11:53:12] > Build Component: audit-broker
+[11:53:12]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:53:13] OK Build Component: audit-broker -> exit 0
+[11:53:13] > Build Component: governance-policy-runtime
+[11:53:13]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:53:14] OK Build Component: governance-policy-runtime -> exit 0
+[11:53:14] > Build Component: identity-and-trust
+[11:53:14]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:53:15] OK Build Component: identity-and-trust -> exit 0
+[11:53:15] > Build Component: koa-mediatheque
+[11:53:15]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:53:16] OK Build Component: koa-mediatheque -> exit 0
+[11:53:16] > Build Component: koa-node-agent
+[11:53:16]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:53:26] OK Build Component: koa-node-agent -> exit 0
+[11:53:26] > Build Component: kristal-runtime
+[11:53:26]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:53:27] OK Build Component: kristal-runtime -> exit 0
+[11:53:27] > Build Component: publication-gateway
+[11:53:27]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:53:28] OK Build Component: publication-gateway -> exit 0
+[11:53:28] > Build Component: resource-governor
+[11:53:28]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[11:53:29] OK Build Component: resource-governor -> exit 0
+[11:53:29] Build All Components complete
+[11:53:45] DEBUG PRINCIPAL complete; formal conformance findings are non-blocking in DEBUG
+[12:04:12] > Refresh workspace koa-linux-main
+[12:04:12]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:04:25] Another action is already running
+[12:04:35] Previous workspace preserved: /home/rejean/work/.koali-control-backups/koa-linux-20260919T160412Z-417
+[12:04:35] Workspace imported: /home/rejean/work/koa-linux
+[12:04:35] Source fingerprint recorded: 5f47f628cc50fdcba803de020a73194597535c2fc41c3d25de43a4a6e77d7414
+[12:04:35] OK Refresh workspace koa-linux-main -> exit 0
+[12:04:43] > Generate Effective Profile: sovereign-linux-node
+[12:04:43]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:04:43] Using CPython 3.13.15
+[12:04:43] Creating virtual environment at: assembly/.venv
+[12:04:43]    Building koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[12:04:43]       Built koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[12:04:43] Installed 7 packages in 12ms
+[12:04:43] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[12:04:44] OK Generate Effective Profile: sovereign-linux-node -> exit 0
+[12:04:51] > Prepare Component Build Environment
+[12:04:51]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:04:51]    Building koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[12:04:51]    Building koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[12:04:51]    Building koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[12:04:51]    Building koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[12:04:52]       Built koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[12:04:52]       Built koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[12:04:52]       Built koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[12:04:52]       Built koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[12:04:52] Prepared 4 packages in 858ms
+[12:04:52] Installed 30 packages in 86ms
+[12:04:52]  + attrs==26.1.0
+[12:04:52]  + cfgv==3.4.0
+[12:04:52]  + distlib==0.4.0
+[12:04:52]  + filelock==3.20.0
+[12:04:52]  + identify==2.6.15
+[12:04:52]  + iniconfig==2.1.0
+[12:04:52]  + jsonschema==4.26.0
+[12:04:52]  + jsonschema-specifications==2025.9.1
+[12:04:52]  + koa-interfaces==1.0.0 (from file:///home/rejean/work/koa-linux/interfaces/python)
+[12:04:52]  + koa-konnaxion-adapter==0.1.0 (from file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter)
+[12:04:52]  + koa-resource-governor==1.0.0 (from file:///home/rejean/work/koa-linux/components/resource-governor)
+[12:04:52]  + koa-sentient-adapter==1.0.0 (from file:///home/rejean/work/koa-linux/integrations/sentient/adapter)
+[12:04:52]  + mypy==1.17.1
+[12:04:52]  + mypy-extensions==1.1.0
+[12:04:52]  + nodeenv==1.9.1
+[12:04:52]  + packaging==25.0
+[12:04:52]  + pathspec==0.12.1
+[12:04:52]  + platformdirs==4.5.0
+[12:04:52]  + pluggy==1.6.0
+[12:04:52]  + pre-commit==4.3.0
+[12:04:52]  + pygments==2.19.2
+[12:04:52]  + pytest==9.0.3
+[12:04:52]  + pyyaml==6.0.3
+[12:04:52]  + referencing==0.37.0
+[12:04:52]  + rpds-py==2026.6.3
+[12:04:52]  + ruff==0.12.12
+[12:04:52]  + setuptools==82.0.1
+[12:04:52]  + typing-extensions==4.15.0
+[12:04:52]  + virtualenv==20.35.3
+[12:04:52]  + wheel==0.48.0
+[12:04:52] OK Prepare Component Build Environment -> exit 0
+[12:04:53] Component build environment READY: frozen all-groups sync complete; source worktree clean
+[12:04:53] > Build Component: audit-broker
+[12:04:53]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:04:54] OK Build Component: audit-broker -> exit 0
+[12:04:54] > Build Component: governance-policy-runtime
+[12:04:54]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:04:55] OK Build Component: governance-policy-runtime -> exit 0
+[12:04:55] > Build Component: identity-and-trust
+[12:04:55]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:04:56] OK Build Component: identity-and-trust -> exit 0
+[12:04:56] > Build Component: koa-mediatheque
+[12:04:56]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:04:57] OK Build Component: koa-mediatheque -> exit 0
+[12:04:57] > Build Component: koa-node-agent
+[12:04:57]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:05:07] OK Build Component: koa-node-agent -> exit 0
+[12:05:08] > Build Component: kristal-runtime
+[12:05:08]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:05:08] OK Build Component: kristal-runtime -> exit 0
+[12:05:09] > Build Component: publication-gateway
+[12:05:09]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:05:09] OK Build Component: publication-gateway -> exit 0
+[12:05:09] > Build Component: resource-governor
+[12:05:09]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:05:10] OK Build Component: resource-governor -> exit 0
+[12:05:10] Build All Components complete
+[12:06:01] DEBUG PRINCIPAL complete; formal conformance findings are non-blocking in DEBUG
+[12:13:27] > Refresh workspace koa-linux-main
+[12:13:27]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:13:50] Previous workspace preserved: /home/rejean/work/.koali-control-backups/koa-linux-20260919T161327Z-429
+[12:13:50] Workspace imported: /home/rejean/work/koa-linux
+[12:13:50] Source fingerprint recorded: 0bcc01e8312d55ed1d34bade299346d3bfa4cc4644e170b410822ede1c63149a
+[12:13:50] OK Refresh workspace koa-linux-main -> exit 0
+[12:13:59] > Generate Effective Profile: sovereign-linux-node
+[12:13:59]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:13:59] Using CPython 3.13.15
+[12:13:59] Creating virtual environment at: assembly/.venv
+[12:13:59]    Building koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[12:14:00]       Built koa-assembly @ file:///home/rejean/work/koa-linux/assembly
+[12:14:00] Installed 7 packages in 12ms
+[12:14:00] PASS: resolved sovereign_linux_node to generated/profiles/sovereign_linux_node/effective-profile.json
+[12:14:00] OK Generate Effective Profile: sovereign-linux-node -> exit 0
+[12:14:06] Discovered 8 component build targets
+[12:14:10] SOURCE_DATE_EPOCH = 1789834385
+[12:14:14] > Prepare Component Build Environment
+[12:14:14]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:14:14]    Building koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[12:14:14]    Building koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[12:14:14]    Building koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[12:14:14]    Building koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[12:14:15]       Built koa-sentient-adapter @ file:///home/rejean/work/koa-linux/integrations/sentient/adapter
+[12:14:15]       Built koa-interfaces @ file:///home/rejean/work/koa-linux/interfaces/python
+[12:14:15]       Built koa-konnaxion-adapter @ file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter
+[12:14:15]       Built koa-resource-governor @ file:///home/rejean/work/koa-linux/components/resource-governor
+[12:14:15] Prepared 4 packages in 796ms
+[12:14:15] Installed 30 packages in 97ms
+[12:14:15]  + attrs==26.1.0
+[12:14:15]  + cfgv==3.4.0
+[12:14:15]  + distlib==0.4.0
+[12:14:15]  + filelock==3.20.0
+[12:14:15]  + identify==2.6.15
+[12:14:15]  + iniconfig==2.1.0
+[12:14:15]  + jsonschema==4.26.0
+[12:14:15]  + jsonschema-specifications==2025.9.1
+[12:14:15]  + koa-interfaces==1.0.0 (from file:///home/rejean/work/koa-linux/interfaces/python)
+[12:14:15]  + koa-konnaxion-adapter==0.1.0 (from file:///home/rejean/work/koa-linux/integrations/konnaxion/adapter)
+[12:14:15]  + koa-resource-governor==1.0.0 (from file:///home/rejean/work/koa-linux/components/resource-governor)
+[12:14:15]  + koa-sentient-adapter==1.0.0 (from file:///home/rejean/work/koa-linux/integrations/sentient/adapter)
+[12:14:15]  + mypy==1.17.1
+[12:14:15]  + mypy-extensions==1.1.0
+[12:14:15]  + nodeenv==1.9.1
+[12:14:15]  + packaging==25.0
+[12:14:15]  + pathspec==0.12.1
+[12:14:15]  + platformdirs==4.5.0
+[12:14:15]  + pluggy==1.6.0
+[12:14:15]  + pre-commit==4.3.0
+[12:14:15]  + pygments==2.19.2
+[12:14:15]  + pytest==9.0.3
+[12:14:15]  + pyyaml==6.0.3
+[12:14:15]  + referencing==0.37.0
+[12:14:15]  + rpds-py==2026.6.3
+[12:14:15]  + ruff==0.12.12
+[12:14:15]  + setuptools==82.0.1
+[12:14:15]  + typing-extensions==4.15.0
+[12:14:15]  + virtualenv==20.35.3
+[12:14:15]  + wheel==0.48.0
+[12:14:15] OK Prepare Component Build Environment -> exit 0
+[12:14:16] Component build environment READY: frozen all-groups sync complete; source worktree clean
+[12:14:16] > Build Component: audit-broker
+[12:14:16]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:14:17] OK Build Component: audit-broker -> exit 0
+[12:14:18] > Build Component: governance-policy-runtime
+[12:14:18]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:14:18] OK Build Component: governance-policy-runtime -> exit 0
+[12:14:19] > Build Component: identity-and-trust
+[12:14:19]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:14:19] OK Build Component: identity-and-trust -> exit 0
+[12:14:20] > Build Component: koa-mediatheque
+[12:14:20]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:14:20] OK Build Component: koa-mediatheque -> exit 0
+[12:14:21] > Build Component: koa-node-agent
+[12:14:21]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:14:30] OK Build Component: koa-node-agent -> exit 0
+[12:14:31] > Build Component: kristal-runtime
+[12:14:31]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:14:31] OK Build Component: kristal-runtime -> exit 0
+[12:14:32] > Build Component: publication-gateway
+[12:14:32]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:14:32] OK Build Component: publication-gateway -> exit 0
+[12:14:33] > Build Component: resource-governor
+[12:14:33]   wsl.exe -d Ubuntu-24.04 -- bash -s
+[12:14:33] OK Build Component: resource-governor -> exit 0
+[12:14:33] Build All Components complete
+[12:14:46] DEBUG PRINCIPAL complete; formal conformance findings are non-blocking in DEBUG

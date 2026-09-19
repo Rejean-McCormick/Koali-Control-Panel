@@ -69,6 +69,8 @@ class ControlApp(tk.Tk):
             build_image=self.orchestrator.build_image,
         )
         self.busy = False
+        self._status_refresh_lock = threading.Lock()
+        self._dev_refresh_lock = threading.Lock()
         self.status_vars: dict[str, tk.StringVar] = {}
         self.setting_vars: dict[str, tk.Variable] = {}
         self.last_preflight: PreflightReport | None = None
@@ -304,10 +306,10 @@ class ControlApp(tk.Tk):
 
     def _build_diagnostics(self) -> None:
         f = self._tab("Diagnostics")
-        ttk.Label(f, text="Core stabilization / Debug / Final target", style="Section.TLabel").pack(anchor="w")
+        ttk.Label(f, text="Koali System / Store / Core / Final target", style="Section.TLabel").pack(anchor="w")
         ttk.Label(
             f,
-            text="CORE STABILIZATION is the primary pre-subsystem campaign. Konnaxion is a placeholder; Ariane, Orgo and Semantik Architect are deferred. DEBUG can inspect the broader target; VALIDATION/RELEASE keep full canonical semantics.",
+            text="Koali System checks the live shell. Store / N13 checks koa-linux store sources; Linux session checks require configuration in LevelUpDiag. Core and QEMU campaigns use the active workspace. Verdicts remain owned by LevelUpDiag.",
             wraplength=1050,
         ).pack(anchor="w", pady=(4, 8))
         box = ttk.Frame(f); box.pack(fill=tk.X, pady=10)
@@ -318,6 +320,8 @@ class ControlApp(tk.Tk):
             ("VALIDATION (FINAL TARGET)", self.run_all),
             ("Structure Strict", lambda: self.run_diagnostic_campaign("structure")),
             ("Release Preparation", self.full_gate),
+            ("Koali System", lambda: self.run_diagnostic_role("koali_system")),
+            ("Store / N13", lambda: self.run_diagnostic_role("store")),
             ("System N10", self.system_diagnostics),
             ("All Strict Levels", self.run_all_diagnostic_levels),
         ], columns=4)
@@ -513,20 +517,38 @@ class ControlApp(tk.Tk):
     def log(self, message: str) -> None:
         self.events.put(("log", message))
 
-    def _append_log(self, message: str) -> None:
-        line = f"[{time.strftime('%H:%M:%S')}] {message}\n"
-        self.log_text.insert(tk.END, line); self.log_text.see(tk.END)
-        self.log_dir.mkdir(exist_ok=True)
+    def _append_logs(self, messages) -> None:
+        if not messages:
+            return
+        stamp = time.strftime('%H:%M:%S')
+        text = ''.join(f"[{stamp}] {message}\n" for message in messages)
+        self.log_text.insert(tk.END, text)
+        lines = int(self.log_text.index('end-1c').split('.')[0])
+        if lines > 5000:
+            self.log_text.delete('1.0', f'{lines - 5000}.0')
+        self.log_text.see(tk.END)
         try:
-            with self.log_path.open("a", encoding="utf-8") as handle: handle.write(line)
+            self.log_dir.mkdir(exist_ok=True)
+            if self.log_path.exists() and self.log_path.stat().st_size > 5 * 1024 * 1024:
+                self.log_path.replace(self.log_path.with_suffix('.log.1'))
+            with self.log_path.open('a', encoding='utf-8') as handle:
+                handle.write(text)
         except OSError:
             pass
 
+    def _append_log(self, message: str) -> None:
+        self._append_logs([message])
+
     def _drain_events(self) -> None:
+        logs = []
+        deadline = time.monotonic() + 0.02
         try:
-            while True:
+            for _ in range(200):
+                if time.monotonic() >= deadline:
+                    break
                 kind, payload = self.events.get_nowait()
-                if kind == "log": self._append_log(str(payload))
+                if kind == "log": logs.append(str(payload))
+                elif kind == "refresh_status": self.refresh_status_async()
                 elif kind == "busy": self.busy = bool(payload)
                 elif kind == "status":
                     key, value = payload
@@ -553,7 +575,8 @@ class ControlApp(tk.Tk):
                             self.qemu_vars[key].set(str(value))
         except queue.Empty:
             pass
-        self.after(100, self._drain_events)
+        self._append_logs(logs)
+        self.after(25 if not self.events.empty() else 100, self._drain_events)
 
     def async_action(self, label: str, fn) -> None:
         if self.busy:
@@ -568,7 +591,7 @@ class ControlApp(tk.Tk):
                 self.log(f"ERROR {label}: {exc}")
             finally:
                 self.events.put(("busy", False))
-                self.after(0, self.refresh_status_async)
+                self.events.put(("refresh_status", None))
         threading.Thread(target=worker, daemon=True, name=f"koali-{label}").start()
 
     def _report_text(self, report: PreflightReport) -> str:
@@ -577,9 +600,11 @@ class ControlApp(tk.Tk):
         return "\n".join(lines)
 
     def refresh_status_async(self) -> None:
+        ws = self.active_workspace()
+        if not self._status_refresh_lock.acquire(blocking=False):
+            return
         def work() -> None:
             try:
-                ws = self.active_workspace()
                 report = self.workspace_manager.preflight(ws)
                 self.last_preflight = report
                 checks = report.by_key()
@@ -600,6 +625,8 @@ class ControlApp(tk.Tk):
             except Exception as exc:
                 self.events.put(("status", ("Environment", "BLOCKED")))
                 self.events.put(("environment_detail", str(exc)))
+            finally:
+                self._status_refresh_lock.release()
         threading.Thread(target=work, daemon=True, name="koali-status").start()
 
     # Home / meta
@@ -626,25 +653,29 @@ class ControlApp(tk.Tk):
         self.async_action("STABILIZE KOALI CORE", work)
 
     def _refresh_dev_stack_status(self, *, schedule: bool = True) -> None:
-        if hasattr(self, "product_status_vars"):
+        if hasattr(self, "product_status_vars") and self._dev_refresh_lock.acquire(blocking=False):
+            product_ids = list(self.product_status_vars)
             def work() -> None:
-                lines = []
-                for product_id in list(self.product_status_vars):
-                    try:
-                        snap = self.products.snapshot(product_id)
-                    except Exception as exc:
-                        self.events.put(("product_status", (product_id, {"installed": "ERROR", "runtime": "ERROR", "health": "ERROR", "detail": str(exc)})))
-                        continue
-                    values = {
-                        "installed": "YES" if snap.installed else "NO",
-                        "runtime": snap.runtime_state,
-                        "health": snap.health_state,
-                        "detail": snap.detail,
-                    }
-                    self.events.put(("product_status", (product_id, values)))
-                    lines.append(f"{snap.label:16} installed={'yes' if snap.installed else 'no':3} runtime={snap.runtime_state:12} health={snap.health_state}")
-                if hasattr(self, "dev_stack_detail") and lines:
-                    self.events.put(("dev_stack_detail", "\n".join(lines)))
+                try:
+                    lines = []
+                    for product_id in product_ids:
+                        try:
+                            snap = self.products.snapshot(product_id)
+                        except Exception as exc:
+                            self.events.put(("product_status", (product_id, {"installed": "ERROR", "runtime": "ERROR", "health": "ERROR", "detail": str(exc)})))
+                            continue
+                        values = {
+                            "installed": "YES" if snap.installed else "NO",
+                            "runtime": snap.runtime_state,
+                            "health": snap.health_state,
+                            "detail": snap.detail,
+                        }
+                        self.events.put(("product_status", (product_id, values)))
+                        lines.append(f"{snap.label:16} installed={'yes' if snap.installed else 'no':3} runtime={snap.runtime_state:12} health={snap.health_state}")
+                    if hasattr(self, "dev_stack_detail") and lines:
+                        self.events.put(("dev_stack_detail", "\n".join(lines)))
+                finally:
+                    self._dev_refresh_lock.release()
             threading.Thread(target=work, daemon=True, name="koali-dev-stack-status").start()
         if schedule:
             self.after(2500, self._refresh_dev_stack_status)
@@ -745,7 +776,7 @@ class ControlApp(tk.Tk):
         ws = self.active_workspace()
         self.async_action(
             "DEBUG PRINCIPAL",
-            lambda: self.debugdiag.run(ws, profile=ws.profile, timeout=max(self.orchestrator.timeout(), 1800)),
+            lambda: self.debugdiag.run(ws, profile=self.final_profile(), timeout=max(self.orchestrator.timeout(), 1800)),
         )
 
     def run_all(self) -> None:
@@ -1054,12 +1085,13 @@ class ControlApp(tk.Tk):
         try: epoch = self._source_epoch()
         except RuntimeError as exc: messagebox.showinfo(APP_NAME, str(exc)); return
         ws = self.active_workspace()
-        self.async_action(
-            f"Build Component: {component}",
-            lambda: self.orchestrator.build_component(
-                ws, component, epoch, timeout=max(self.orchestrator.timeout(), 900)
-            ),
-        )
+        def work() -> None:
+            timeout = max(self.orchestrator.timeout(), 900)
+            if not self.orchestrator.prepare_component_build_environment(ws, timeout=timeout):
+                self.log(f"Build Component blocked before {component}: component build environment is not ready")
+                return
+            self.orchestrator.build_component(ws, component, epoch, timeout=timeout)
+        self.async_action(f"Build Component: {component}", work)
 
     def build_all_components(self) -> None:
         items = list(self.component_combo.cget("values"))
@@ -1070,9 +1102,13 @@ class ControlApp(tk.Tk):
         except RuntimeError as exc: messagebox.showinfo(APP_NAME, str(exc)); return
         ws = self.active_workspace()
         def work() -> None:
+            timeout = max(self.orchestrator.timeout(), 900)
+            if not self.orchestrator.prepare_component_build_environment(ws, timeout=timeout):
+                self.log("Build All Components stopped: component build environment is not ready")
+                return
             for component in items:
                 if self.orchestrator.build_component(
-                    ws, str(component), epoch, timeout=max(self.orchestrator.timeout(), 900)
+                    ws, str(component), epoch, timeout=timeout
                 ) != 0:
                     self.log(f"Build All Components stopped at {component}")
                     return
@@ -1157,7 +1193,7 @@ class ControlApp(tk.Tk):
             result = backend.runtime_probe(timeout=3)
             if result.code == 0 and "KOALI_WSL_READY" in result.output:
                 self.log(f"WSL backend ready: {backend.distro}")
-                self.after(0, self.refresh_status_async)
+                self.events.put(("refresh_status", None))
                 return
         self.log(f"WSL backend {backend.distro} is still not command-ready. Re-open PREPARE WSL BACKEND if the first-run console was closed early.")
 

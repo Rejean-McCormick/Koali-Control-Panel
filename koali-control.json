@@ -93,11 +93,22 @@
         "build": "stabilization",
         "run_all": "validation",
         "release": "release",
-        "delivery": "delivery"
-      }
+        "delivery": "delivery",
+        "koali_system": "koali-system",
+        "store": "store"
+      },
+      "campaign_backends": {
+        "koali-system": "native",
+        "koali-system-debug": "native",
+        "store": "native",
+        "N12": "native",
+        "N13": "native"
+      },
+      "roots": {}
     }
   },
   "workflow": {
+    "current_focus": "core_stabilization",
     "qualification_scope": "koali_core_pre_subsystem",
     "final_profile": "sovereign-linux-node",
     "external_subsystems": {
@@ -106,8 +117,7 @@
       "orgo": "draft_not_admitted",
       "semantik_architect": "deferred_not_admitted"
     },
-    "policy": "stabilize Koali environment and native core before subsystem integration; never fabricate source admission",
-    "current_focus": "core_stabilization"
+    "policy": "stabilize Koali environment and native core before subsystem integration; never fabricate source admission"
   },
   "products": {
     "konnaxion": {
@@ -263,8 +273,6 @@
         "enabled": true
       }
     ],
-    "startup_timeout_seconds": 45,
-    "command_timeout_seconds": 1800,
     "koali_spaces_integration": {
       "enabled": true,
       "mode": "delegated",
@@ -301,7 +309,9 @@
       "legacy_projection": {
         "konnaxion_embed_base": "http://127.0.0.1:4300"
       }
-    }
+    },
+    "startup_timeout_seconds": 45,
+    "command_timeout_seconds": 1800
   },
   "build": {
     "image": {

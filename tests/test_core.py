@@ -119,6 +119,90 @@ class CoreTests(unittest.TestCase):
         self.assertIn('("Generate Effective Profile", self.generate_effective_profile)', source)
         self.assertIn("self.orchestrator.generate_effective_profile(ws)", source)
 
+
+    def test_component_environment_uses_frozen_all_groups_sync(self) -> None:
+        self.assertEqual(Orchestrator.component_environment_cli(), "uv sync --frozen --all-groups")
+
+    def test_generate_effective_profile_cleans_only_untracked_assembly_lock(self) -> None:
+        calls: list[tuple[str, str]] = []
+        logs: list[str] = []
+
+        class StubBackend:
+            def execute_in_workspace(self, workspace, command, label, timeout=None):
+                calls.append((label, command))
+                return 0
+
+            def capture_in_workspace(self, workspace, command, timeout=None):
+                calls.append(("capture", command))
+                return CaptureResult(0, "?? assembly/uv.lock\n")
+
+        raw = {
+            "repository": "koa-linux",
+            "backend": "stub",
+            "profile": "sovereign-linux-node",
+            "root": "/repo",
+            "assembly": {"renderer": "systemd", "overlays": []},
+        }
+        ws = Workspace.from_config("main", raw)
+        orchestrator = Orchestrator({}, None, lambda _name: StubBackend(), logs.append)
+        self.assertEqual(orchestrator.generate_effective_profile(ws), 0)
+        self.assertTrue(any(label == "Clean transient assembly UV lock" and "rm -f" in command for label, command in calls))
+        self.assertTrue(any("Removed transient untracked assembly/uv.lock" in line for line in logs))
+
+    def test_generate_effective_profile_preserves_tracked_assembly_lock(self) -> None:
+        calls: list[tuple[str, str]] = []
+
+        class StubBackend:
+            def execute_in_workspace(self, workspace, command, label, timeout=None):
+                calls.append((label, command))
+                return 0
+
+            def capture_in_workspace(self, workspace, command, timeout=None):
+                return CaptureResult(0, " M assembly/uv.lock\n")
+
+        raw = {
+            "repository": "koa-linux",
+            "backend": "stub",
+            "profile": "sovereign-linux-node",
+            "root": "/repo",
+            "assembly": {"renderer": "systemd", "overlays": []},
+        }
+        ws = Workspace.from_config("main", raw)
+        orchestrator = Orchestrator({}, None, lambda _name: StubBackend(), lambda _msg: None)
+        self.assertEqual(orchestrator.generate_effective_profile(ws), 0)
+        self.assertFalse(any(label == "Clean transient assembly UV lock" for label, _command in calls))
+
+    def test_component_build_environment_syncs_then_requires_clean_worktree(self) -> None:
+        calls: list[tuple[str, str]] = []
+        captures = iter([CaptureResult(0, ""), CaptureResult(0, "")])
+
+        class StubBackend:
+            def execute_in_workspace(self, workspace, command, label, timeout=None):
+                calls.append((label, command))
+                return 0
+
+            def capture_in_workspace(self, workspace, command, timeout=None):
+                calls.append(("capture", command))
+                return next(captures)
+
+        raw = {
+            "repository": "koa-linux",
+            "backend": "stub",
+            "profile": "sovereign-linux-node",
+            "root": "/repo",
+            "assembly": {"renderer": "systemd", "overlays": []},
+        }
+        ws = Workspace.from_config("main", raw)
+        logs: list[str] = []
+        orchestrator = Orchestrator({}, None, lambda _name: StubBackend(), logs.append)
+        self.assertTrue(orchestrator.prepare_component_build_environment(ws))
+        self.assertIn(("Prepare Component Build Environment", "uv sync --frozen --all-groups"), calls)
+        self.assertTrue(any("Component build environment READY" in line for line in logs))
+
+    def test_debug_principal_uses_final_profile(self) -> None:
+        source = (Path(__file__).parents[1] / "koali_control" / "app.py").read_text(encoding="utf-8")
+        self.assertIn("self.debugdiag.run(ws, profile=self.final_profile()", source)
+
     def test_windows_utf16_output_decodes_without_mojibake(self) -> None:
         original = "Une distribution portant le nom fourni existe déjà.\r\nCode d'erreur : Wsl/InstallDistro/ERROR_ALREADY_EXISTS\r\n"
         encoded = original.encode("utf-16-le")
@@ -603,7 +687,7 @@ class CoreTests(unittest.TestCase):
         script = scripts[-1]
         self.assertIn("/mnt/c/mycode/kOA-Linux/LevelUpDiag-Koali", script)
         self.assertIn("LEVELUPDIAG_TARGET_REPO_ROOT=/home/rejean/work/koa-linux", script)
-        self.assertIn("python levelupdiag.py run nightly", script)
+        self.assertIn("python levelupdiag.py --target /home/rejean/work/koa-linux run nightly", script)
         self.assertNotIn("koa_tools.cli", script)
 
     def test_levelupdiag_resolves_repository_relative_qemu_paths_inside_workspace(self) -> None:
@@ -670,7 +754,7 @@ class CoreTests(unittest.TestCase):
         adapter = LevelUpDiagAdapter(cfg, lambda _name: backend, lambda _msg: None)
         self.assertEqual(adapter.run_system(ws), 0)
         script = scripts[-1]
-        self.assertIn("python levelupdiag.py run N10", script)
+        self.assertIn("python levelupdiag.py --target /home/rejean/work/koa-linux run N10", script)
         self.assertIn("KOA_QEMU_IMAGE=/mnt/c/images/koa.img", script)
         self.assertIn("KOA_QEMU_EXPECTED_RELEASE_IDENTITY=koa-test", script)
         self.assertIn("KOA_QEMU_CONFINEMENT_READY_REGEX=confined-ready", script)
@@ -781,7 +865,7 @@ class CoreTests(unittest.TestCase):
         self.assertTrue(any("N01 [WARN] Optional tool is not available: cargo" in line for line in logs))
         self.assertTrue(any("evidence (LevelUpDiag):" in line for line in logs))
         self.assertTrue(any("tool=cargo" in line for line in logs))
-        self.assertIn("python levelupdiag.py run developer-fast", scripts[-1])
+        self.assertIn("python levelupdiag.py --target /home/rejean/work/koa-linux run developer-fast", scripts[-1])
 
 
     def test_levelupdiag_evidence_presentation_is_bounded_without_interpreting_verdicts(self) -> None:

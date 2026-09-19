@@ -56,6 +56,89 @@ class Orchestrator:
         ]
         return shell_join(parts)
 
+    @staticmethod
+    def component_environment_cli() -> str:
+        """Synchronize the repository environment required by offline component builds.
+
+        The repository component builder intentionally uses ``uv build --offline
+        --no-build-isolation`` for Python wheels.  That means build backends such
+        as setuptools/wheel must already be present in the root workspace .venv.
+        A freshly refreshed WSL workspace does not have that environment yet.
+        """
+        return "uv sync --frozen --all-groups"
+
+    def _cleanup_transient_assembly_lock(self, workspace: Workspace) -> bool:
+        """Remove only the untracked assembly/uv.lock created by ``uv run``.
+
+        ``assembly`` is a standalone UV project without a committed lockfile in
+        the current repository contract.  Resolving an effective profile can
+        therefore materialize ``assembly/uv.lock`` and immediately violate the
+        component builder's clean-worktree requirement.  Never remove a tracked
+        lockfile: a future repository revision may legitimately add one.
+        """
+        backend = self.backend(workspace)
+        path = "assembly/uv.lock"
+        status = backend.capture_in_workspace(
+            workspace,
+            f"git status --porcelain=v1 --untracked-files=all -- {shlex.quote(path)}",
+            timeout=30,
+        )
+        if status.code != 0:
+            self.log("WARN: could not inspect transient assembly lock state")
+            return False
+        if status.output.strip() != f"?? {path}":
+            return True
+        rc = backend.execute_in_workspace(
+            workspace,
+            f"rm -f -- {shlex.quote(path)}",
+            "Clean transient assembly UV lock",
+            timeout=30,
+        )
+        if rc == 0:
+            self.log("Removed transient untracked assembly/uv.lock so strict component builds keep a clean source worktree")
+            return True
+        self.log("WARN: could not remove transient untracked assembly/uv.lock")
+        return False
+
+    def prepare_component_build_environment(
+        self,
+        workspace: Workspace,
+        *,
+        timeout: int | None = None,
+    ) -> bool:
+        """Prepare ignored build state without weakening repository cleanliness.
+
+        This performs the canonical frozen all-groups sync so Python component
+        builds have their declared build backends available before the repository
+        switches to its deliberately offline/no-build-isolation build step.
+        """
+        if not self._cleanup_transient_assembly_lock(workspace):
+            return False
+        backend = self.backend(workspace)
+        effective_timeout = timeout or max(self.timeout(), 900)
+        if backend.execute_in_workspace(
+            workspace,
+            self.component_environment_cli(),
+            "Prepare Component Build Environment",
+            timeout=effective_timeout,
+        ) != 0:
+            return False
+        dirty = backend.capture_in_workspace(
+            workspace,
+            "git status --porcelain=v1 --untracked-files=all",
+            timeout=30,
+        )
+        if dirty.code != 0:
+            self.log("Component build preflight could not verify Git worktree cleanliness")
+            return False
+        if dirty.output.strip():
+            self.log("Component build preflight blocked: source worktree is not clean")
+            for line in dirty.output.splitlines()[:20]:
+                self.log(f"  {line}")
+            return False
+        self.log("Component build environment READY: frozen all-groups sync complete; source worktree clean")
+        return True
+
     def build_component(
         self,
         workspace: Workspace,
@@ -81,6 +164,15 @@ class Orchestrator:
                 source_date_epoch,
                 timeout=effective_timeout,
             )
+        elif rc != 0:
+            self.log("Python component build failed after environment preparation; the repository builder remained fail-closed")
+            probe = backend.capture_in_workspace(
+                workspace,
+                "uv run --frozen python -c 'import setuptools, wheel; print(\"python-build-backends: setuptools=\" + setuptools.__version__ + \" wheel=\" + wheel.__version__)'",
+                timeout=30,
+            )
+            if probe.output.strip():
+                self.log(probe.output.strip())
         return rc
 
     def _log_report(self, report) -> None:
@@ -296,12 +388,18 @@ class Orchestrator:
             str(value) for value in workspace.assembly.get("overlays", [])
             if str(value) in OVERLAYS
         )
-        return self.backend(workspace).execute_in_workspace(
+        rc = self.backend(workspace).execute_in_workspace(
             workspace,
             self.effective_profile_cli(workspace.profile, overlays),
             f"Generate Effective Profile: {workspace.profile}",
             timeout=self.timeout(),
         )
+        # UV currently materializes assembly/uv.lock because assembly is a
+        # standalone project without a committed lockfile.  Keep the generated
+        # profile, but remove only that untracked transient so the next strict
+        # component build is not self-blocked by the Control Panel.
+        self._cleanup_transient_assembly_lock(workspace)
+        return rc
 
     def assembly_args(self, workspace: Workspace, *, check: bool = False) -> list[str]:
         assembly = workspace.assembly

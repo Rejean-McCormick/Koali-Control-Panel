@@ -1,6 +1,17 @@
-# Koali Control Panel 4.0.0
+# Koali Control Panel 4.1.1
 
-Koali Control Panel 4.0.0 keeps the existing development orchestration while introducing the final-target **Koali Spaces integration boundary**. Product runtimes remain autonomous, removable, and independently runnable. The Control Panel may start, validate and observe products, but Koali owns Space composition, activation semantics, manifests, ACP interpretation and receipts.
+Koali Control Panel 4.1.1 keeps the existing development orchestration while introducing the final-target **Koali Spaces integration boundary**. Product runtimes remain autonomous, removable, and independently runnable. The Control Panel may start, validate and observe products, but Koali owns Space composition, activation semantics, manifests, ACP interpretation and receipts.
+
+
+## 4.1.1 build-workflow hardening
+
+The final-target workflow now handles two WSL build-state edges discovered during live `sovereign-linux-node` assembly:
+
+- **Generate Effective Profile** removes only an **untracked** `assembly/uv.lock` created transiently by UV. A tracked lockfile is never removed. This prevents the Control Panel from making the source worktree dirty immediately before the repository's strict component builder.
+- **Build Component / Build All Components** first runs the canonical `uv sync --frozen --all-groups`, then verifies that Git is clean before entering the repository's deliberately offline component build. This restores build backends such as `setuptools`/`wheel` after a fresh workspace import.
+- **DEBUG PRINCIPAL** now targets the configured final profile (normally `sovereign-linux-node`) rather than the development workspace profile.
+
+The repository remains authoritative: the Control Panel does not relax the clean-worktree rule, fabricate component bundles, or change subsystem admission.
 
 ## Development orchestration
 
@@ -367,3 +378,9 @@ This path is intentionally isolated behind `KoaliSpacesIntegrationController`. N
 ### Koali Spaces runtime mode
 
 After `validate`, `build`, and `smoke:runtime`, the dev stack launches Koali Spaces with `pnpm run start` from the packaged `dist/runtime` artifact. This preserves the production-strict CSP while Konnaxion may continue to run in hot-reload development mode. The browser shell must hydrate and then consume `/api/shell-state` before the stack is considered visually usable.
+
+## Version 4.1 — Koali System et diagnostic du store
+
+L'onglet Diagnostics ajoute **Koali System** et **Store / N13**, avec routage natif
+ou workspace adapté, rapports par exécution et amélioration des rafraîchissements,
+journaux et arrêts. Voir [installation, réglages et limites](UPDATE_KCP4_1_DIAGNOSTICS.md).
