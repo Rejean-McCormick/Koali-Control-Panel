@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import tempfile
 import subprocess
@@ -525,6 +526,10 @@ class CoreTests(unittest.TestCase):
         self.assertIn("/.git", seen[-1])
 
 
+    @unittest.skipIf(
+        os.name == "nt",
+        "POSIX transfer fixture uses bash; exercised by Linux CI while Windows WSL behavior is unit-tested with stubs.",
+    )
     def test_windows_checkout_import_preserves_source_content_without_git_state_management(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             base = Path(td)

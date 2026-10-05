@@ -31,3 +31,17 @@ logs/*
 Thumbs.db
 Desktop.ini
 /SmartSnap.pyw
+
+# Additional transient/local patterns
+.env
+.env.*
+!.env.example
+!*.example
+*.bak_*
+*.bak-*
+*.bak.*
+*.backup-*
+*.backup_*
+*.swp
+*.swo
+*~

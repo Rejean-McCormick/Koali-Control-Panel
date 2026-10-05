@@ -15,10 +15,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  windows:
-    name: Windows control-plane tests
-    runs-on: windows-2022
-    timeout-minutes: 20
+  tests:
+    name: Tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-2022
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
 
     steps:
       - name: Check out source
@@ -36,19 +42,3 @@ jobs:
 
       - name: Run Control Panel test suite
         run: python -m unittest discover -s tests -p "test_*.py" -v
-
-      - name: Record tested revision
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path ci-evidence | Out-Null
-          "Koali-Control-Panel=$(git rev-parse HEAD)" | Set-Content ci-evidence/revision.txt
-          "python=$(python --version)" | Add-Content ci-evidence/revision.txt
-
-      - name: Upload Control Panel evidence
-        if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
-        with:
-          name: koali-control-panel-${{ github.sha }}
-          path: ci-evidence/
-          if-no-files-found: warn
-          retention-days: 30
