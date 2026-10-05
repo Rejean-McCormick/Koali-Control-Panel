@@ -1,0 +1,54 @@
+name: Koali Control Panel CI
+
+"on":
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: koali-control-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows control-plane tests
+    runs-on: windows-2022
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Provision Python 3.13
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.13"
+
+      - name: Compile Control Panel sources
+        run: python -m compileall -q koali_control
+
+      - name: Run Control Panel test suite
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: Record tested revision
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ci-evidence | Out-Null
+          "Koali-Control-Panel=$(git rev-parse HEAD)" | Set-Content ci-evidence/revision.txt
+          "python=$(python --version)" | Add-Content ci-evidence/revision.txt
+
+      - name: Upload Control Panel evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: koali-control-panel-${{ github.sha }}
+          path: ci-evidence/
+          if-no-files-found: warn
+          retention-days: 30
