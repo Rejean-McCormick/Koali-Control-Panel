@@ -8,17 +8,17 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class StabilizationWorkflowTests(unittest.TestCase):
-    def test_default_workflow_focus_is_core_stabilization(self):
+    def test_default_workflow_focus_is_integrated_ecosystem(self):
         cfg = json.loads((ROOT / "koali-control.json").read_text(encoding="utf-8"))
         workflow = cfg["workflow"]
-        self.assertEqual(workflow["current_focus"], "core_stabilization")
+        self.assertEqual(workflow["current_focus"], "integrated_ecosystem_runtime")
         self.assertNotIn("phase", workflow)
-        self.assertEqual(workflow["qualification_scope"], "koali_core_pre_subsystem")
+        self.assertEqual(workflow["qualification_scope"], "supplied_non_diag_snapshot_components")
         self.assertEqual(workflow["final_profile"], "sovereign-linux-node")
-        self.assertEqual(workflow["external_subsystems"]["konnaxion"], "placeholder_until_integration")
-        self.assertEqual(workflow["external_subsystems"]["ariane"], "deferred_until_koali_integration_test")
-        self.assertEqual(workflow["external_subsystems"]["orgo"], "draft_not_admitted")
-        self.assertEqual(workflow["external_subsystems"]["semantik_architect"], "deferred_not_admitted")
+        self.assertEqual(workflow["external_subsystems"]["konnaxion"], "not_in_supplied_snapshot_not_required")
+        self.assertEqual(workflow["external_subsystems"]["ariane"], "not_in_supplied_snapshot_not_required")
+        self.assertEqual(workflow["external_subsystems"]["orgo"], "integrated_owner_surface")
+        self.assertEqual(workflow["external_subsystems"]["semantik_architect"], "integrated_headless_service")
 
 
     def test_v4_dev_stack_keeps_products_modular(self):
@@ -26,7 +26,8 @@ class StabilizationWorkflowTests(unittest.TestCase):
         self.assertEqual(cfg["schema_version"], 4)
         self.assertEqual(cfg["dev_stack"]["products"], ["koali-spaces"])
         self.assertIn("konnaxion", cfg["products"])
-        self.assertFalse(cfg["products"]["konnaxion"]["optional"])
+        self.assertTrue(cfg["products"]["konnaxion"]["optional"])
+        self.assertFalse(cfg["products"]["konnaxion"]["enabled"])
         self.assertFalse(cfg["products"]["koali-spaces"]["optional"])
         self.assertTrue(cfg["products"]["orgo"]["optional"])
         self.assertFalse(cfg["products"]["orgo"]["enabled"])

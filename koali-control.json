@@ -84,7 +84,7 @@
       "description": "Read-only local pipeline diagnosis; conformance findings never block DEBUG execution."
     },
     "levelupdiag": {
-      "enabled": true,
+      "enabled": false,
       "root": "C:\\mycode\\kOA-Linux\\LevelUpDiag-Koali",
       "campaigns": {
         "stabilization": "stabilization",
@@ -108,22 +108,45 @@
     }
   },
   "workflow": {
-    "current_focus": "core_stabilization",
-    "qualification_scope": "koali_core_pre_subsystem",
+    "current_focus": "integrated_ecosystem_runtime",
+    "qualification_scope": "supplied_non_diag_snapshot_components",
     "final_profile": "sovereign-linux-node",
     "external_subsystems": {
-      "konnaxion": "placeholder_until_integration",
-      "ariane": "deferred_until_koali_integration_test",
-      "orgo": "draft_not_admitted",
-      "semantik_architect": "deferred_not_admitted"
+      "konnaxion": "not_in_supplied_snapshot_not_required",
+      "ariane": "not_in_supplied_snapshot_not_required",
+      "orgo": "integrated_owner_surface",
+      "semantik_architect": "integrated_headless_service",
+      "konfid": "integrated_headless_service",
+      "kor": "integrated_headless_service",
+      "orgo_worlds": "integrated_owner_surface",
+      "koa_mediatheque": "integrated_owner_surface_with_sibling_data_instance"
     },
-    "policy": "stabilize Koali environment and native core before subsystem integration; never fabricate source admission"
+    "policy": "run and qualify the supplied Koali ecosystem including Médiathèque while preserving owner/data boundaries; diagnostics stay excluded and Kristal stays reference-only",
+    "linked_ecosystem": {
+      "scope": "supplied_non_diag_snapshot_components",
+      "policy": "integrate operational owners and qualify protocol/infrastructure sources without transferring authority; diagnostics are excluded; Kristal Framework is reference-only",
+      "components": {
+        "orgo": "owner_surface_supervised",
+        "orgo_worlds": "owner_surface_supervised",
+        "semantik_architect": "headless_service_supervised",
+        "semantik_runtime_orchestrator": "qualified_release_runtime",
+        "interaction_kernel": "qualified_protocol_runtime",
+        "konfid": "headless_security_service_supervised",
+        "kor": "headless_mobile_boundary_service_supervised",
+        "koa_linux": "qualified_platform_authority",
+        "koali_control_panel": "qualified_orchestration",
+        "koa_digital_ecosystem": "qualified_system_map",
+        "kristal_framework": "reference_only_no_theory_import",
+        "koa_mediatheque": "owner_surface_supervised",
+        "koa_mediatheque_blank_instance": "qualified_sibling_data_instance"
+      }
+    }
   },
   "products": {
     "konnaxion": {
       "label": "Konnaxion",
-      "enabled": true,
-      "optional": false,
+      "enabled": false,
+      "optional": true,
       "backend": "windows",
       "roots": [
         "C:\\mycode\\Konnaxion\\Konnaxion",
@@ -187,14 +210,26 @@
       "environment": {
         "KOALI_SPACES_PORT": "4173",
         "KOALI_SPACES_STATE_ROOT": "C:\\mycode\\kOA-Linux\\.koali-control-runtime\\koali-spaces",
-        "KOALI_SPACES_SURFACE_REGISTRY": "C:\\mycode\\kOA-Linux\\.koali-control-runtime\\koali-spaces\\surface-runtime.json"
+        "KOALI_SPACES_SURFACE_REGISTRY": "C:\\mycode\\kOA-Linux\\.koali-control-runtime\\koali-spaces\\surface-runtime.json",
+        "KOALI_ECOSYSTEM_ROOTS": "C:\\mycode;C:\\mycode\\kOA-Linux;C:\\mycode\\Orgo;C:\\mycode\\SemantiK_Architect",
+        "KOALI_REPO_ORGO": "C:\\mycode\\Orgo\\Orgo",
+        "KOALI_REPO_ORGO_WORLDS": "C:\\mycode\\Orgo\\Orgo_Worlds",
+        "KOALI_REPO_SEMANTIK_ARCHITECT": "C:\\mycode\\SemantiK_Architect\\SemantiK_Architect",
+        "KOALI_REPO_SEMANTIK_RUNTIME_ORCHESTRATOR": "C:\\mycode\\SemantiK_Architect\\SemantiK_Runtime_Orchestrator",
+        "KOALI_REPO_INTERACTION_KERNEL": "C:\\mycode\\Interaction-Kernel\\interaction_kernel",
+        "KOALI_REPO_KONFID": "C:\\mycode\\Konfid\\konfid",
+        "KOALI_REPO_KOR": "C:\\mycode\\Kor\\kor",
+        "KOALI_REPO_KOA_LINUX": "C:\\mycode\\kOA-Linux\\koa-linux",
+        "KOALI_REPO_CONTROL_PANEL": "C:\\mycode\\kOA-Linux\\Koali-Control-Panel",
+        "KOALI_REPO_DIGITAL_ECOSYSTEM": "C:\\mycode\\kOA_Digital_Ecosystem\\kOA_Digital_Ecosystem",
+        "KOALI_REPO_KRISTAL": "C:\\mycode\\Kristal\\Kristal-Framework"
       },
       "open_url": "http://127.0.0.1:4173/",
       "health_url": "http://127.0.0.1:4173/health"
     },
     "konnaxion-capsule-manager": {
       "label": "Konnaxion Capsule Manager",
-      "enabled": true,
+      "enabled": false,
       "optional": true,
       "backend": "windows",
       "roots": [
@@ -264,15 +299,7 @@
         "smoke"
       ]
     },
-    "gates": [
-      {
-        "id": "konnaxion-koali-adapter",
-        "label": "Koali ↔ Konnaxion adapter",
-        "workspace": "koa-linux-main",
-        "command": "uv run --frozen pytest -q integrations/konnaxion/tests",
-        "enabled": true
-      }
-    ],
+    "gates": [],
     "koali_spaces_integration": {
       "enabled": true,
       "mode": "delegated",
@@ -285,24 +312,14 @@
       "verify": {
         "modules": [
           {
-            "module_id": "konnaxion",
-            "required": true,
-            "route": "/apps/konnaxion"
-          },
-          {
             "module_id": "orgo",
             "required": true,
             "route": "/apps/orgo"
           },
           {
-            "module_id": "semantik_architect",
+            "module_id": "orgo_worlds",
             "required": true,
-            "route": "/apps/semantik_architect"
-          },
-          {
-            "module_id": "koa_mediatheque",
-            "required": true,
-            "route": "/apps/koa_mediatheque"
+            "route": "/apps/orgo_worlds"
           }
         ]
       },

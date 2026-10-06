@@ -15,6 +15,7 @@ Koali Control Panel is a local development control surface. It prepares executio
 | [Development workflows](development-workflows.md) | Core stabilization, daily development, build/final-profile paths, and one-click orchestration. |
 | [Products and Dev Stack](products-and-dev-stack.md) | Modular products/services, gates, health checks, startup and shutdown. |
 | [Koali Spaces integration](koali-spaces-integration.md) | Delegated vs legacy projection modes and the Space authority boundary. |
+| [Linked ecosystem integration](koali-linked-ecosystem.md) | Snapshot repository linking, non-diagnostic scope, and Kristal reference-only policy. |
 | [QEMU and diagnostics](qemu-and-diagnostics.md) | QEMU execution context, readiness, LevelUpDiag delegation, and diagnostic scope. |
 | [Testing](testing.md) | Self-test, unit-test suite, test areas, and safe validation commands. |
 

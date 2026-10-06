@@ -149,7 +149,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
             "description": "Read-only local pipeline diagnosis; conformance findings never block DEBUG execution.",
         },
         "levelupdiag": {
-            "enabled": True,
+            "enabled": False,
             "root": r"C:\mycode\kOA-Linux\LevelUpDiag-Koali",
             "campaigns": {
                 "stabilization": "stabilization",
@@ -163,16 +163,18 @@ DEFAULT_CONFIG: dict[str, Any] = {
         }
     },
     "workflow": {
-        "current_focus": "core_stabilization",
-        "qualification_scope": "koali_core_pre_subsystem",
+        "current_focus": "integrated_ecosystem_runtime",
+        "qualification_scope": "supplied_non_diag_snapshot_components",
         "final_profile": "sovereign-linux-node",
         "external_subsystems": {
-            "konnaxion": "placeholder_until_integration",
-            "ariane": "deferred_until_koali_integration_test",
-            "orgo": "draft_not_admitted",
-            "semantik_architect": "deferred_not_admitted",
+            "konnaxion": "not_in_supplied_snapshot_not_required",
+            "ariane": "not_in_supplied_snapshot_not_required",
+            "orgo": "integrated_owner_surface",
+            "semantik_architect": "integrated_headless_service",
+            "konfid": "integrated_headless_service",
+            "kor": "integrated_headless_service",
         },
-        "policy": "stabilize Koali environment and native core before subsystem integration; never fabricate source admission",
+        "policy": "run and qualify the supplied Koali ecosystem including Médiathèque while preserving owner/data boundaries; diagnostics stay excluded and Kristal stays reference-only",
     },
     "products": {
         "konnaxion": {

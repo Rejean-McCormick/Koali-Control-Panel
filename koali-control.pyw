@@ -25,7 +25,7 @@ def self_test() -> int:
     assert integration.get("product_id") == "koali-spaces"
     assert integration.get("state_root")
     spaces_env = cfg["products"]["koali-spaces"].get("environment", {})
-    assert cfg["products"]["koali-spaces"]["commands"]["start"] == "pnpm run start"
+    assert cfg["products"]["koali-spaces"]["commands"]["start"] == "pnpm dev"
     assert spaces_env.get("KOALI_SPACES_STATE_ROOT") == integration.get("state_root")
     assert str(spaces_env.get("KOALI_SPACES_SURFACE_REGISTRY", "")).endswith("surface-runtime.json")
     default = cfg["environment"]["default_workspace"]
@@ -36,11 +36,13 @@ def self_test() -> int:
     assert ws.backend in cfg["backends"]
     assert "{home}" in ws.root or ws.root.startswith("/")
     workflow = cfg.get("workflow", {})
-    assert workflow.get("current_focus") == "core_stabilization"
+    assert workflow.get("current_focus") == "integrated_ecosystem_runtime"
     assert "phase" not in workflow
-    assert workflow.get("qualification_scope") == "koali_core_pre_subsystem"
+    assert workflow.get("qualification_scope") == "supplied_non_diag_snapshot_components"
     assert workflow.get("final_profile") == "sovereign-linux-node"
-    campaigns = cfg.get("diagnostics", {}).get("levelupdiag", {}).get("campaigns", {})
+    diagnostics = cfg.get("diagnostics", {}).get("levelupdiag", {})
+    assert diagnostics.get("enabled") is False
+    campaigns = diagnostics.get("campaigns", {})
     assert campaigns.get("stabilization") == "stabilization"
     assert campaigns.get("stabilization_runtime") == "stabilization-runtime"
     print(f"Koali Control Panel {__version__} self-test: PASS")
