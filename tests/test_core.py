@@ -64,6 +64,15 @@ class CoreTests(unittest.TestCase):
                 self.assertIn(key, qemu)
             self.assertNotIn("semantik_active_profile", qemu)
 
+    def test_capsule_manager_not_automatically_enabled_on_first_start(self) -> None:
+        # Developer supervision is not the VPS release-admission owner.
+        with tempfile.TemporaryDirectory() as td:
+            cfg = ConfigStore(Path(td) / "fresh.json").load()
+        product = cfg["products"]["konnaxion-capsule-manager"]
+        self.assertFalse(product["enabled"])
+        self.assertTrue(product["optional"])
+        self.assertEqual(product["environment"]["KX_AGENT_HOST"], "127.0.0.1")
+
     def test_workspace_roundtrip(self) -> None:
         raw = {
             "repository": "koa-linux",

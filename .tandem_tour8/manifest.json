@@ -1,0 +1,19 @@
+{
+  "label": "KOALI CONTROL PANEL",
+  "suite": "panel",
+  "backup_id": "control_panel_tour8",
+  "root_markers": [
+    "koali_control/config.py",
+    "koali-control.json"
+  ],
+  "files": {
+    "koali_control/config.py": {
+      "base_sha256": "095c6137cc422a20b99b7b616994f68ecc37d95fef9f9e283d0376ec0417a2ee",
+      "sha256": "b0ac52f6f8dc3601c2a2e1bf274925f0c64787194dafb8419466b91d2388e3e9"
+    },
+    "tests/test_core.py": {
+      "base_sha256": "a8c34e810b84082544de635d61c31fe4f17ca9dfccb16c6b4b0b33e9da9d7af4",
+      "sha256": "a2b0d3f4a96cde3ab3773217566e0840031fc1bd230094b046d9840a39e2da9e"
+    }
+  }
+}

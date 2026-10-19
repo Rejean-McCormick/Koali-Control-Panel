@@ -246,7 +246,8 @@ DEFAULT_CONFIG: dict[str, Any] = {
         },
         "konnaxion-capsule-manager": {
             "label": "Konnaxion Capsule Manager",
-            "enabled": True,
+            # Optional developer service: absence of a saved configuration never opts in.
+            "enabled": False,
             "optional": True,
             "backend": "windows",
             "roots": [r"C:\mycode\Konnaxion\Konnaxion_Capsule_Manager"],
