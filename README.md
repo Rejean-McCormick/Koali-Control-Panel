@@ -1,5 +1,7 @@
 # Koali Control Panel 4.1.1
 
+> **Branch 08 target-system alignment:** see [docs/BRANCH08_FINAL_READINESS.md](docs/BRANCH08_FINAL_READINESS.md) for verified local interoperability tests, explicit authority boundaries, and unresolved deployment gates. This note does not confer release or host permissions.
+
 Koali Control Panel 4.1.1 keeps the existing development orchestration while introducing the final-target **Koali Spaces integration boundary**. Product runtimes remain autonomous, removable, and independently runnable. The Control Panel may start, validate and observe products, but Koali owns Space composition, activation semantics, manifests, ACP interpretation and receipts.
 
 

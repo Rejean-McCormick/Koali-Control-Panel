@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Callable
 import urllib.error
 import urllib.request
+from urllib.parse import urlsplit
 
 from .products import ProductRegistry
 from .spaces_pilot import LegacyKoaliSpacesPilotState
@@ -193,25 +194,65 @@ class KoaliSpacesIntegrationController:
         return result
 
     def verify(self) -> bool:
-        """Verify public acceptance criteria only; never infer authorization from health."""
+        """Check public shell and selected module readiness, not policy authority.
+
+        The Koali-owned shell-state API exposes both the aggregate state and
+        per-owner module_health. A route returning HTTP 200 is never sufficient
+        to call a required backend ready. Legacy projection mode is explicitly
+        exempt from the module_health requirement because its static pilot does
+        not publish those observations.
+        """
         if not self.enabled():
             return True
         base = self._shell_base()
         try:
             req = urllib.request.Request(f"{base}/api/shell-state", headers={"User-Agent": "Koali-Control-Panel"})
             with urllib.request.urlopen(req, timeout=5.0) as response:
-                state = json.loads(response.read().decode("utf-8"))
+                # Bound the untrusted HTTP response; JSON document validation
+                # below is entirely local and has no activation side effects.
+                body = response.read(2 * 1024 * 1024 + 1)
+                if len(body) > 2 * 1024 * 1024:
+                    self.log("Koali integration verification: shell state is oversized")
+                    return False
+                state = json.loads(body.decode("utf-8"))
 
+            if not isinstance(state, dict) or state.get("state") != "ready":
+                self.log("Koali integration verification: shell is not ready")
+                return False
+            modules = state.get("modules")
+            active_space = state.get("active_space")
+            if not isinstance(modules, list) or not isinstance(active_space, dict):
+                self.log("Koali integration verification: shell structure is invalid")
+                return False
+            instances_list = active_space.get("module_instances")
+            if not isinstance(instances_list, list):
+                self.log("Koali integration verification: module instances are missing")
+                return False
             manifests = {
-                str(item.get("module_id", ""))
-                for item in state.get("modules", [])
-                if isinstance(item, dict)
+                item.get("module_id")
+                for item in modules
+                if isinstance(item, dict) and isinstance(item.get("module_id"), str)
             }
             instances = {
-                str(item.get("module_id", ""))
-                for item in (state.get("active_space") or {}).get("module_instances", [])
-                if isinstance(item, dict) and bool(item.get("enabled", False))
+                item.get("module_id")
+                for item in instances_list
+                if isinstance(item, dict) and item.get("enabled") is True
+                and isinstance(item.get("module_id"), str)
             }
+            health_rows = state.get("module_health", [])
+            if not isinstance(health_rows, list):
+                self.log("Koali integration verification: module health projection is invalid")
+                return False
+            health: dict[str, str] = {}
+            for item in health_rows:
+                if not isinstance(item, dict) or not isinstance(item.get("module_id"), str):
+                    self.log("Koali integration verification: malformed module health entry")
+                    return False
+                module_id = item["module_id"]
+                if module_id in health or not isinstance(item.get("state"), str):
+                    self.log("Koali integration verification: duplicate or malformed module health entry")
+                    return False
+                health[module_id] = item["state"]
 
             for expected in self._verification_modules():
                 module_id = expected["module_id"]
@@ -223,22 +264,41 @@ class KoaliSpacesIntegrationController:
                     self.log(f"Koali integration verification: optional module not admitted: {module_id}")
                     continue
 
-                route = expected["route"]
-                if route:
-                    if not route.startswith("/") or route.startswith("//"):
-                        self.log(f"Koali integration verification: route must be a same-origin absolute path: {route}")
+                observed = health.get(module_id)
+                if self.mode() == "delegated" and observed != "ready":
+                    if expected["required"]:
+                        self.log(f"Koali integration verification: required module not ready: {module_id} ({observed or 'unknown'})")
                         return False
+                    self.log(f"Koali integration verification: optional module not ready: {module_id} ({observed or 'unknown'})")
+                    continue
+                if observed is not None and observed != "ready":
+                    if expected["required"]:
+                        self.log(f"Koali integration verification: required module not ready: {module_id} ({observed})")
+                        return False
+                    continue
+
+                route = expected["route"]
+                if route and (not route.startswith("/") or route.startswith("//") or "\\" in route
+                              or "?" in route or "#" in route or any(ord(ch) < 32 for ch in route)):
+                    self.log(f"Koali integration verification: route must be a same-origin absolute path: {route}")
+                    return False
+                if route:
                     route_url = f"{base}/{route.lstrip('/')}"
                     route_req = urllib.request.Request(route_url, headers={"User-Agent": "Koali-Control-Panel"})
                     with urllib.request.urlopen(route_req, timeout=10.0) as response:
                         code = int(getattr(response, "status", 200))
+                        redirected = response.geturl() if callable(getattr(response, "geturl", None)) else route_url
+                    if urlsplit(redirected)[:2] != urlsplit(route_url)[:2]:
+                        self.log(f"Koali integration verification: route escaped the configured shell origin: {route}")
+                        return False
                     if not 200 <= code < 400:
                         self.log(f"Koali integration verification: {route} returned HTTP {code}")
                         return False
-                    self.log(f"Koali integration verification: {module_id} admitted; {route} resolved (HTTP {code})")
+                    self.log(f"Koali integration verification: {module_id} ready; {route} resolved (HTTP {code})")
 
-            self.log("Koali Spaces integration verification passed")
+            self.log("Koali Spaces integration verification passed (readiness only; no policy grant)")
             return True
-        except (OSError, urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError, ValueError) as exc:
+        except (OSError, urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError, ValueError,
+                UnicodeError, TypeError) as exc:
             self.log(f"Koali Spaces integration verification failed: {exc}")
             return False

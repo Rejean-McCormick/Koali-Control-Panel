@@ -102,7 +102,23 @@ class ProcessTests(unittest.TestCase):
             child = 'import time; time.sleep(60)'
             script = ('import subprocess,sys,pathlib,time; p=subprocess.Popen([sys.executable,"-c",' + repr(child) + ']); pathlib.Path(' + repr(str(pidfile)) + ').write_text(str(p.pid)); time.sleep(60)')
             start = time.monotonic()
-            self.assertEqual(runner.run([sys.executable, '-c', script], 'tree test', timeout=0.5), 124)
+            outcomes: list[int] = []
+            worker = threading.Thread(
+                target=lambda: outcomes.append(runner.run([sys.executable, '-c', script],
+                                                          'tree test', timeout=2.0)),
+                name='process-tree-timeout-test',
+            )
+            worker.start()
+            # The child must actually exist before testing that timeout kills
+            # descendants. A fixed 0.5-second startup budget is flaky on busy
+            # Linux CI machines and can kill Python before child.pid is written.
+            deadline = time.monotonic() + 1.5
+            while not pidfile.exists() and worker.is_alive() and time.monotonic() < deadline:
+                time.sleep(0.01)
+            self.assertTrue(pidfile.exists(), f"child was not launched: {logs!r}")
+            worker.join(5)
+            self.assertFalse(worker.is_alive(), 'timeout did not complete')
+            self.assertEqual(outcomes, [124])
             self.assertLess(time.monotonic() - start, 6)
             pid = int(pidfile.read_text())
             stat = Path(f'/proc/{pid}/stat')

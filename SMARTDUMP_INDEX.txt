@@ -1,0 +1,72 @@
+SMART DUMPER INDEX
+==================
+generated_at: 2026-11-09T16:34:39.899095
+source_root: C:\mycode\kOA-Linux\Koali-Control-Panel
+mode: snapshot
+zip_file: Koali-Control-Panel_Code_snapshot.zip
+embedded_index: SMARTDUMP_INDEX.txt
+file_count: 59
+total_bytes: 664732
+compression: ZIP_DEFLATED level 1
+
+FILES
+-----
+.github/workflows/ci.yml	997 bytes
+.gitignore	531 bytes
+.smartignore	229 bytes
+.tandem_tour8/installer.py	9024 bytes
+.tandem_tour8/manifest.json	611 bytes
+.tandem_tour8/payload/koali_control/config.py	32376 bytes
+.tandem_tour8/payload/tests/test_core.py	73443 bytes
+CHANGES_KCP4_1.json	1018 bytes
+CHANGES_KCP4_1_1.json	652 bytes
+CODE_SNAPSHOT_MANIFEST.md	2364 bytes
+docs/architecture.md	6924 bytes
+docs/backends-and-workspaces.md	3823 bytes
+docs/configuration.md	6704 bytes
+docs/development-workflows.md	4777 bytes
+docs/getting-started.md	3523 bytes
+docs/koali-linked-ecosystem.md	1322 bytes
+docs/koali-spaces-integration.md	3085 bytes
+docs/products-and-dev-stack.md	4144 bytes
+docs/qemu-and-diagnostics.md	4339 bytes
+docs/README.md	3121 bytes
+docs/testing.md	2844 bytes
+install-shortcut.ps1	568 bytes
+INSTALL_TANDEM_TOUR8_KOALI_CONTROL_PANEL.cmd	135 bytes
+koali-control.json	13361 bytes
+koali-control.pyw	2865 bytes
+koali_control/__init__.py	22 bytes
+koali_control/app.py	74290 bytes
+koali_control/backends.py	49249 bytes
+koali_control/config.py	32376 bytes
+koali_control/debugdiag.py	7112 bytes
+koali_control/devstack.py	9054 bytes
+koali_control/levelupdiag.py	21491 bytes
+koali_control/models.py	2603 bytes
+koali_control/orchestration.py	23542 bytes
+koali_control/process.py	7646 bytes
+koali_control/process_tree.py	1241 bytes
+koali_control/products.py	19162 bytes
+koali_control/qemu.py	25564 bytes
+koali_control/spaces_integration.py	9773 bytes
+koali_control/spaces_pilot.py	13058 bytes
+koali_control/supervisor.py	7613 bytes
+koali_control/workspaces.py	13652 bytes
+KOALI_DEVELOPMENT_ENVIRONMENT_REFERENCE.md	15706 bytes
+LAUNCH.cmd	284 bytes
+Launch_MULTiSmartDump.lnk	1359 bytes
+PREVIEW_TANDEM_TOUR8_KOALI_CONTROL_PANEL.cmd	135 bytes
+README.md	23755 bytes
+README_TANDEM_TOUR8.txt	323 bytes
+ROLLBACK_TANDEM_TOUR8_KOALI_CONTROL_PANEL.cmd	136 bytes
+tests/test_control_41.py	9179 bytes
+tests/test_core.py	73443 bytes
+tests/test_dev_stack.py	25131 bytes
+tests/test_stabilization_workflow.py	4195 bytes
+UPDATE_KCP4_1_1_BUILD_WORKFLOW.md	1492 bytes
+UPDATE_KCP4_1_DIAGNOSTICS.md	4430 bytes
+UPDATE_KCP4_KOALI_SPACES_INTEGRATION.md	3125 bytes
+VALIDATION_KCP4_1.txt	1033 bytes
+VALIDATION_KCP4_1_1.txt	644 bytes
+VERIFY_TANDEM_TOUR8_KOALI_CONTROL_PANEL.cmd	134 bytes

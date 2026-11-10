@@ -286,9 +286,11 @@ class DevStackTests(unittest.TestCase):
                 self.status = status
             def __enter__(self): return self
             def __exit__(self, *_args): return False
-            def read(self) -> bytes: return self.payload
+            def read(self, _size: int = -1) -> bytes: return self.payload
 
         shell = json.dumps({
+            "state": "ready",
+            "module_health": [{"module_id": "konnaxion", "state": "ready", "affects_shell_state": True}],
             "modules": [{"module_id": "space_home"}, {"module_id": "konnaxion"}],
             "active_space": {"module_instances": [
                 {"module_id": "space_home", "enabled": True},
@@ -414,9 +416,11 @@ class DevStackTests(unittest.TestCase):
             def __init__(self, payload: bytes) -> None: self.payload = payload
             def __enter__(self): return self
             def __exit__(self, *_args): return False
-            def read(self) -> bytes: return self.payload
+            def read(self, _size: int = -1) -> bytes: return self.payload
 
         shell = json.dumps({
+            "state": "ready",
+            "module_health": [{"module_id": "demo", "state": "ready", "affects_shell_state": True}],
             "modules": [{"module_id": "demo"}],
             "active_space": {"module_instances": [{"module_id": "demo", "enabled": True}]},
         }).encode("utf-8")
