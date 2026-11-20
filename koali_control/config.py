@@ -192,11 +192,11 @@ DEFAULT_CONFIG: dict[str, Any] = {
                 "build": "Push-Location 'frontend'; pnpm run build; $rc=$LASTEXITCODE; Pop-Location; exit $rc"
             },
             "environment": {
-                "API_PROXY_BASE": "http://127.0.0.1:8000/api",
+                "API_PROXY_BASE": "http://127.0.0.1:21131/api",
                 "NEXT_PUBLIC_API_BASE": "/api",
-                "PORT": "4300"
+                "PORT": "21130"
             },
-            "open_url": "http://127.0.0.1:4300/",
+            "open_url": "http://127.0.0.1:21130/",
             "health_url": "",
             "services": {
                 "api": {
@@ -204,22 +204,22 @@ DEFAULT_CONFIG: dict[str, Any] = {
                     "backend": "windows",
                     "root": "backend",
                     "marker": "manage.py",
-                    "command": "& '.\\.venv\\Scripts\\python.exe' -m uvicorn config.asgi:application --host 127.0.0.1 --port 8000 --reload",
+                    "command": "& '.\\.venv\\Scripts\\python.exe' -m uvicorn config.asgi:application --host 127.0.0.1 --port 21131 --reload",
                     "environment": {},
-                    "health_url": "http://127.0.0.1:8000/"
+                    "health_url": "http://127.0.0.1:21131/"
                 },
                 "web": {
                     "label": "Web",
                     "backend": "windows",
                     "root": "frontend",
                     "marker": "package.json",
-                    "command": "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 4300",
+                    "command": "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 21130",
                     "environment": {
-                        "API_PROXY_BASE": "http://127.0.0.1:8000/api",
+                        "API_PROXY_BASE": "http://127.0.0.1:21131/api",
                         "NEXT_PUBLIC_API_BASE": "/api",
-                        "PORT": "4300"
+                        "PORT": "21130"
                     },
-                    "health_url": "http://127.0.0.1:4300/"
+                    "health_url": "http://127.0.0.1:21130/"
                 }
             }
         },
@@ -237,12 +237,12 @@ DEFAULT_CONFIG: dict[str, Any] = {
                 "start": "pnpm dev"
             },
             "environment": {
-                "KOALI_SPACES_PORT": "4173",
+                "KOALI_SPACES_PORT": "21170",
                                 "KOALI_SPACES_STATE_ROOT": r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces",
                 "KOALI_SPACES_SURFACE_REGISTRY": r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces\surface-runtime.json"
             },
-            "open_url": "http://127.0.0.1:4173/",
-            "health_url": "http://127.0.0.1:4173/health"
+            "open_url": "http://127.0.0.1:21170/",
+            "health_url": "http://127.0.0.1:21170/health"
         },
         "konnaxion-capsule-manager": {
             "label": "Konnaxion Capsule Manager",
@@ -260,11 +260,11 @@ DEFAULT_CONFIG: dict[str, Any] = {
                 "KX_ROOT": r"C:\mycode\Konnaxion\runtime",
                 "KX_SOURCE_DIR": r"C:\mycode\Konnaxion\Konnaxion",
                 "KX_AGENT_HOST": "127.0.0.1",
-                "KX_AGENT_PORT": "8765",
+                "KX_AGENT_PORT": "21132",
                 "KX_MANAGER_HOST": "127.0.0.1",
-                "KX_MANAGER_PORT": "8714"
+                "KX_MANAGER_PORT": "21133"
             },
-            "open_url": "http://127.0.0.1:8714/ui",
+            "open_url": "http://127.0.0.1:21133/ui",
             "health_url": "",
             "services": {
                 "agent": {
@@ -274,16 +274,16 @@ DEFAULT_CONFIG: dict[str, Any] = {
                     "marker": "pyproject.toml",
                     "command": "uv run kx-agent run",
                     "environment": {},
-                    "health_url": "http://127.0.0.1:8765/v1/health"
+                    "health_url": "http://127.0.0.1:21132/v1/health"
                 },
                 "manager": {
                     "label": "Manager",
                     "backend": "windows",
                     "root": ".",
                     "marker": "pyproject.toml",
-                    "command": "uv run kx-manager --host 127.0.0.1 --port 8714",
+                    "command": "uv run kx-manager --host 127.0.0.1 --port 21133",
                     "environment": {},
-                    "health_url": "http://127.0.0.1:8714/ui"
+                    "health_url": "http://127.0.0.1:21133/ui"
                 }
             }
         },
@@ -333,7 +333,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
                 ]
             },
             "legacy_projection": {
-                "konnaxion_embed_base": "http://127.0.0.1:4300"
+                "konnaxion_embed_base": "http://127.0.0.1:21130"
             }
         },
         "startup_timeout_seconds": 45,
@@ -568,7 +568,7 @@ def normalize_v4_spaces_integration(config: dict[str, Any]) -> None:
             verify["modules"] = [{"module_id": module_id, "required": True, "route": f"/apps/{module_id}"}]
 
     integration.setdefault("state_root", r"C:\mycode\kOA-Linux\.koali-control-runtime\koali-spaces")
-    legacy.setdefault("konnaxion_embed_base", "http://127.0.0.1:4300")
+    legacy.setdefault("konnaxion_embed_base", "http://127.0.0.1:21130")
 
 
 def normalize_v3_product_orchestration(config: dict[str, Any]) -> None:
@@ -604,13 +604,13 @@ def normalize_v3_product_orchestration(config: dict[str, Any]) -> None:
             if isinstance(web, dict):
                 # 3.0.3 forwarded Next CLI options through `pnpm run dev -- ...`;
                 # the separator reaches Next 15 and makes --hostname a project path.
-                legacy_web = "pnpm run dev -- --hostname 127.0.0.1 --port 4300"
+                legacy_web = "pnpm run dev -- --hostname 127.0.0.1 --port 21130"
                 if str(web.get("command", "")) == legacy_web:
-                    web["command"] = "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 4300"
+                    web["command"] = "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 21130"
                 # Konnaxion has no public dedicated frontend health route in this snapshot;
                 # app/_api is a private Next.js folder, so readiness uses the real root route.
-                if str(web.get("health_url", "")) in {"", "http://127.0.0.1:4300/health", "http://127.0.0.1:4300/_api/health"}:
-                    web["health_url"] = "http://127.0.0.1:4300/"
+                if str(web.get("health_url", "")) in {"", "http://127.0.0.1:21130/health", "http://127.0.0.1:21130/_api/health"}:
+                    web["health_url"] = "http://127.0.0.1:21130/"
 
     integration = config.setdefault("dev_stack", {}).setdefault("koali_spaces_integration", {})
     integration.setdefault("enabled", True)
@@ -629,7 +629,7 @@ def normalize_v3_product_orchestration(config: dict[str, Any]) -> None:
         )
     legacy_cfg = integration.setdefault("legacy_projection", {})
     if isinstance(legacy_cfg, dict):
-        legacy_cfg.setdefault("konnaxion_embed_base", "http://127.0.0.1:4300")
+        legacy_cfg.setdefault("konnaxion_embed_base", "http://127.0.0.1:21130")
 
     spaces = products.get("koali-spaces")
     if isinstance(spaces, dict):

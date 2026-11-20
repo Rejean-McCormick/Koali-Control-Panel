@@ -163,8 +163,8 @@ class KoaliSpacesIntegrationController:
         products = self.config.get("products", {})
         spec = products.get(self.product_id(), {}) if isinstance(products, dict) else {}
         if isinstance(spec, dict):
-            return str(spec.get("open_url", "http://127.0.0.1:4173/")).rstrip("/")
-        return "http://127.0.0.1:4173"
+            return str(spec.get("open_url", "http://127.0.0.1:21170/")).rstrip("/")
+        return "http://127.0.0.1:21170"
 
     def _verification_modules(self) -> list[dict]:
         verify = self.cfg().get("verify", {})

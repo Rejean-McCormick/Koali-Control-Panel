@@ -161,11 +161,11 @@
         "build": "Push-Location 'frontend'; pnpm run build; $rc=$LASTEXITCODE; Pop-Location; exit $rc"
       },
       "environment": {
-        "API_PROXY_BASE": "http://127.0.0.1:8000/api",
+        "API_PROXY_BASE": "http://127.0.0.1:21131/api",
         "NEXT_PUBLIC_API_BASE": "/api",
-        "PORT": "4300"
+        "PORT": "21130"
       },
-      "open_url": "http://127.0.0.1:4300/",
+      "open_url": "http://127.0.0.1:21130/",
       "health_url": "",
       "services": {
         "api": {
@@ -173,22 +173,22 @@
           "backend": "windows",
           "root": "backend",
           "marker": "manage.py",
-          "command": "& '.\\.venv\\Scripts\\python.exe' -m uvicorn config.asgi:application --host 127.0.0.1 --port 8000 --reload",
+          "command": "& '.\\.venv\\Scripts\\python.exe' -m uvicorn config.asgi:application --host 127.0.0.1 --port 21131 --reload",
           "environment": {},
-          "health_url": "http://127.0.0.1:8000/"
+          "health_url": "http://127.0.0.1:21131/"
         },
         "web": {
           "label": "Web",
           "backend": "windows",
           "root": "frontend",
           "marker": "package.json",
-          "command": "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 4300",
+          "command": "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 21130",
           "environment": {
-            "API_PROXY_BASE": "http://127.0.0.1:8000/api",
+            "API_PROXY_BASE": "http://127.0.0.1:21131/api",
             "NEXT_PUBLIC_API_BASE": "/api",
-            "PORT": "4300"
+            "PORT": "21130"
           },
-          "health_url": "http://127.0.0.1:4300/"
+          "health_url": "http://127.0.0.1:21130/"
         }
       }
     },
@@ -208,7 +208,7 @@
         "start": "pnpm dev"
       },
       "environment": {
-        "KOALI_SPACES_PORT": "4173",
+        "KOALI_SPACES_PORT": "21170",
         "KOALI_SPACES_STATE_ROOT": "C:\\mycode\\kOA-Linux\\.koali-control-runtime\\koali-spaces",
         "KOALI_SPACES_SURFACE_REGISTRY": "C:\\mycode\\kOA-Linux\\.koali-control-runtime\\koali-spaces\\surface-runtime.json",
         "KOALI_ECOSYSTEM_ROOTS": "C:\\mycode;C:\\mycode\\kOA-Linux;C:\\mycode\\Orgo;C:\\mycode\\SemantiK_Architect",
@@ -224,8 +224,8 @@
         "KOALI_REPO_DIGITAL_ECOSYSTEM": "C:\\mycode\\kOA_Digital_Ecosystem\\kOA_Digital_Ecosystem",
         "KOALI_REPO_KRISTAL": "C:\\mycode\\Kristal\\Kristal-Framework"
       },
-      "open_url": "http://127.0.0.1:4173/",
-      "health_url": "http://127.0.0.1:4173/health"
+      "open_url": "http://127.0.0.1:21170/",
+      "health_url": "http://127.0.0.1:21170/health"
     },
     "konnaxion-capsule-manager": {
       "label": "Konnaxion Capsule Manager",
@@ -244,11 +244,11 @@
         "KX_ROOT": "C:\\mycode\\Konnaxion\\runtime",
         "KX_SOURCE_DIR": "C:\\mycode\\Konnaxion\\Konnaxion",
         "KX_AGENT_HOST": "127.0.0.1",
-        "KX_AGENT_PORT": "8765",
+        "KX_AGENT_PORT": "21132",
         "KX_MANAGER_HOST": "127.0.0.1",
-        "KX_MANAGER_PORT": "8714"
+        "KX_MANAGER_PORT": "21133"
       },
-      "open_url": "http://127.0.0.1:8714/ui",
+      "open_url": "http://127.0.0.1:21133/ui",
       "health_url": "",
       "services": {
         "agent": {
@@ -258,16 +258,16 @@
           "marker": "pyproject.toml",
           "command": "uv run kx-agent run",
           "environment": {},
-          "health_url": "http://127.0.0.1:8765/v1/health"
+          "health_url": "http://127.0.0.1:21132/v1/health"
         },
         "manager": {
           "label": "Manager",
           "backend": "windows",
           "root": ".",
           "marker": "pyproject.toml",
-          "command": "uv run kx-manager --host 127.0.0.1 --port 8714",
+          "command": "uv run kx-manager --host 127.0.0.1 --port 21133",
           "environment": {},
-          "health_url": "http://127.0.0.1:8714/ui"
+          "health_url": "http://127.0.0.1:21133/ui"
         }
       }
     },
@@ -324,7 +324,7 @@
         ]
       },
       "legacy_projection": {
-        "konnaxion_embed_base": "http://127.0.0.1:4300"
+        "konnaxion_embed_base": "http://127.0.0.1:21130"
       }
     },
     "startup_timeout_seconds": 45,

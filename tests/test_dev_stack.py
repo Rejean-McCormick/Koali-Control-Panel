@@ -24,10 +24,10 @@ class DevStackTests(unittest.TestCase):
         self.assertEqual(DEFAULT_CONFIG["schema_version"], 4)
         self.assertEqual(DEFAULT_CONFIG["products"]["konnaxion"]["backend"], "windows")
         self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["backend"], "windows")
-        self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["health_url"], "http://127.0.0.1:4173/health")
+        self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["health_url"], "http://127.0.0.1:21170/health")
         self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["commands"]["start"], "pnpm dev")
         self.assertEqual(set(DEFAULT_CONFIG["products"]["konnaxion"]["services"]), {"api", "web"})
-        self.assertEqual(DEFAULT_CONFIG["products"]["konnaxion"]["services"]["web"]["health_url"], "http://127.0.0.1:4300/")
+        self.assertEqual(DEFAULT_CONFIG["products"]["konnaxion"]["services"]["web"]["health_url"], "http://127.0.0.1:21130/")
         self.assertEqual(set(DEFAULT_CONFIG["products"]["konnaxion-capsule-manager"]["services"]), {"agent", "manager"})
         self.assertEqual(DEFAULT_CONFIG["dev_stack"]["products"], ["koali-spaces"])
         self.assertIn("integrations/konnaxion/tests", DEFAULT_CONFIG["dev_stack"]["gates"][0]["command"])
@@ -36,14 +36,14 @@ class DevStackTests(unittest.TestCase):
         self.assertEqual(integration["mode"], "delegated")
         self.assertEqual(integration["product_id"], "koali-spaces")
         self.assertEqual({item["module_id"] for item in integration["verify"]["modules"]}, {"konnaxion", "orgo", "semantik_architect", "koa_mediatheque"})
-        self.assertEqual(integration["legacy_projection"]["konnaxion_embed_base"], "http://127.0.0.1:4300")
+        self.assertEqual(integration["legacy_projection"]["konnaxion_embed_base"], "http://127.0.0.1:21130")
         self.assertEqual(DEFAULT_CONFIG["products"]["koali-spaces"]["environment"]["KOALI_SPACES_STATE_ROOT"], integration["state_root"])
 
     def test_json_config_matches_v4_orchestration_surface(self) -> None:
         cfg = json.loads((ROOT / "koali-control.json").read_text(encoding="utf-8"))
         self.assertEqual(cfg["schema_version"], 4)
-        self.assertEqual(cfg["products"]["konnaxion"]["open_url"], "http://127.0.0.1:4300/")
-        self.assertEqual(cfg["products"]["koali-spaces"]["open_url"], "http://127.0.0.1:4173/")
+        self.assertEqual(cfg["products"]["konnaxion"]["open_url"], "http://127.0.0.1:21130/")
+        self.assertEqual(cfg["products"]["koali-spaces"]["open_url"], "http://127.0.0.1:21170/")
         self.assertEqual(cfg["products"]["koali-spaces"]["commands"]["smoke"], "pnpm run smoke:runtime")
         self.assertEqual(cfg["products"]["koali-spaces"]["commands"]["start"], "pnpm dev")
         self.assertNotIn("konnaxion", cfg["dev_stack"]["product_actions"])
@@ -52,8 +52,8 @@ class DevStackTests(unittest.TestCase):
         self.assertIn("pnpm exec cross-env FORCE_COLOR=1 jest --runInBand", cfg["products"]["konnaxion"]["commands"]["test"])
         self.assertNotIn("pnpm run test -- --runInBand", cfg["products"]["konnaxion"]["commands"]["test"])
         web = cfg["products"]["konnaxion"]["services"]["web"]
-        self.assertEqual(web["command"], "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 4300")
-        self.assertEqual(web["health_url"], "http://127.0.0.1:4300/")
+        self.assertEqual(web["command"], "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 21130")
+        self.assertEqual(web["health_url"], "http://127.0.0.1:21130/")
         integration = cfg["dev_stack"]["koali_spaces_integration"]
         self.assertTrue(integration["enabled"])
         self.assertEqual(integration["mode"], "delegated")
@@ -89,15 +89,15 @@ class DevStackTests(unittest.TestCase):
             backend,
             r"C:\mycode\kOA-Linux\koali-spaces",
             "pnpm run start",
-            {"KOALI_SPACES_PORT": "4173"},
+            {"KOALI_SPACES_PORT": "21170"},
         )
         command = argv[-1]
-        self.assertIn("$env:KOALI_SPACES_PORT='4173'", command)
+        self.assertIn("$env:KOALI_SPACES_PORT='21170'", command)
         self.assertIn("Set-Location -LiteralPath", command)
         self.assertIn("pnpm run start", command)
 
     def test_wait_ready_accepts_healthy_external_runtime(self) -> None:
-        spec = SimpleNamespace(product_id="konnaxion", label="Konnaxion", health_url="http://127.0.0.1:4300/", open_url="")
+        spec = SimpleNamespace(product_id="konnaxion", label="Konnaxion", health_url="http://127.0.0.1:21130/", open_url="")
         products = MagicMock()
         products.get.return_value = spec
         products.health.return_value = ("READY", "HTTP 200")
@@ -164,8 +164,8 @@ class DevStackTests(unittest.TestCase):
             product_id="demo", label="Demo", enabled=True, optional=False, backend="windows",
             roots=(r"C:\demo",), marker="package.json", commands={}, environment={}, open_url="", health_url="",
             services=(
-                ProductServiceSpec("api", "API", "windows", "backend", "manage.py", "api", {}, "http://127.0.0.1:8000/"),
-                ProductServiceSpec("web", "Web", "windows", "frontend", "package.json", "web", {}, "http://127.0.0.1:4300/health"),
+                ProductServiceSpec("api", "API", "windows", "backend", "manage.py", "api", {}, "http://127.0.0.1:21131/"),
+                ProductServiceSpec("web", "Web", "windows", "frontend", "package.json", "web", {}, "http://127.0.0.1:21130/health"),
             ),
         )
         with patch.object(registry, "_probe_url", side_effect=[("READY", "HTTP 200"), ("READY", "HTTP 200")]):
@@ -205,13 +205,13 @@ class DevStackTests(unittest.TestCase):
     def test_v303_konnaxion_web_start_and_health_are_upgraded(self) -> None:
         from koali_control.config import normalize_v3_product_orchestration
         cfg = {"products": {"konnaxion": {"services": {"web": {
-            "command": "pnpm run dev -- --hostname 127.0.0.1 --port 4300",
-            "health_url": "http://127.0.0.1:4300/health",
+            "command": "pnpm run dev -- --hostname 127.0.0.1 --port 21130",
+            "health_url": "http://127.0.0.1:21130/health",
         }}}}}
         normalize_v3_product_orchestration(cfg)
         web = cfg["products"]["konnaxion"]["services"]["web"]
-        self.assertEqual(web["command"], "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 4300")
-        self.assertEqual(web["health_url"], "http://127.0.0.1:4300/")
+        self.assertEqual(web["command"], "pnpm exec cross-env FORCE_COLOR=1 next dev --turbo --hostname 127.0.0.1 --port 21130")
+        self.assertEqual(web["health_url"], "http://127.0.0.1:21130/")
         integration = cfg["dev_stack"]["koali_spaces_integration"]
         self.assertTrue(integration["enabled"])
 
@@ -231,7 +231,7 @@ class DevStackTests(unittest.TestCase):
                         "enabled": True,
                         "mode": "legacy_projection",
                         "state_root": td,
-                        "legacy_projection": {"konnaxion_embed_base": "http://127.0.0.1:4300"},
+                        "legacy_projection": {"konnaxion_embed_base": "http://127.0.0.1:21130"},
                     }
                 }
             }
@@ -243,7 +243,7 @@ class DevStackTests(unittest.TestCase):
             self.assertEqual([m["module_id"] for m in state["active_space"]["module_instances"]], ["space_home", "konnaxion"])
             self.assertEqual(state["active_space"]["default_module_id"], "space_home")
             self.assertEqual(registry["runtimeRegistrations"][0]["moduleId"], "konnaxion")
-            self.assertEqual(registry["resolvedTargets"][0]["embedBase"], "http://127.0.0.1:4300")
+            self.assertEqual(registry["resolvedTargets"][0]["embedBase"], "http://127.0.0.1:21130")
             self.assertIn("allow-same-origin", registry["resolvedTargets"][0]["sandboxTokens"])
             self.assertEqual(registry["runtimeObservations"][0]["state"], "ready")
             self.assertTrue(pilot.clear())
@@ -270,7 +270,7 @@ class DevStackTests(unittest.TestCase):
 
     def test_generic_navigation_probe_requires_declared_module_and_route(self) -> None:
         cfg = {
-            "products": {"koali-spaces": {"open_url": "http://127.0.0.1:4173/"}},
+            "products": {"koali-spaces": {"open_url": "http://127.0.0.1:21170/"}},
             "dev_stack": {"koali_spaces_integration": {
                 "enabled": True,
                 "mode": "delegated",
@@ -352,7 +352,7 @@ class DevStackTests(unittest.TestCase):
                 "actions": {"activate": "activate-space", "deactivate": "deactivate-space"},
                 "verify": {"modules": []},
             }},
-            "products": {"koali-spaces": {"open_url": "http://127.0.0.1:4173/"}},
+            "products": {"koali-spaces": {"open_url": "http://127.0.0.1:21170/"}},
         }
         controller = KoaliSpacesIntegrationController(cfg, products, lambda _msg: None)
         with patch.object(controller, "verify", return_value=True):
@@ -401,7 +401,7 @@ class DevStackTests(unittest.TestCase):
 
     def test_verification_routes_are_same_origin_paths_only(self) -> None:
         cfg = {
-            "products": {"koali-spaces": {"open_url": "http://127.0.0.1:4173/"}},
+            "products": {"koali-spaces": {"open_url": "http://127.0.0.1:21170/"}},
             "dev_stack": {"koali_spaces_integration": {
                 "enabled": True,
                 "mode": "delegated",
