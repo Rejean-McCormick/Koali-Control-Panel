@@ -95,7 +95,7 @@ The normal development workspace profile remains `developer-windows-wsl`; choosi
 
 ## Diagnostics
 
-Recommended LevelUpDiag-Koali version: **2.2.0** at the canonical sibling path:
+Last explicitly documented pairing for these Control Panel campaign roles: **LevelUpDiag-Koali 2.2.0**, at the canonical sibling path below. The 2026-11-23 LevelUpDiag-Koali source snapshot identifies itself as **3.0.0**, and retains the campaigns listed here. **This is not a qualification of Control Panel 4.1.1 with LevelUpDiag 3.0 on a running Windows/Koali host.** The 2.2.0 line is retained as historical pairing evidence, not a requirement to downgrade the sibling repository.
 
 ```text
 C:\mycode\kOA-Linux\LevelUpDiag-Koali
@@ -112,6 +112,8 @@ run_all               -> validation
 release               -> release
 delivery              -> delivery
 ```
+
+The 3.0.0 engine additionally defines `koali-final` (N00 + N12 + N14); this Control Panel mapping does **not** select or expose that campaign. For final host qualification, run `RUN_KOALI_FINAL_DIAG.cmd` from the LevelUpDiag-Koali sibling repository explicitly, after Koali is running and with the correct host context. Do not silently repoint `release`, `validation`, or `stabilization` to `koali-final`, and do not enable the currently disabled LevelUpDiag setting automatically.
 
 Strict validation/release can fail on canonical subsystem or conformance requirements. DEBUG/core stabilization do not convert those expected future-integration blockers into false core failures.
 

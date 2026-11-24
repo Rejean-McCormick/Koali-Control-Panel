@@ -1,6 +1,6 @@
 # Koali Control Panel documentation
 
-This directory is the maintained technical documentation for **Koali Control Panel 4.0.0**.
+This directory is the maintained technical documentation for **Koali Control Panel 4.1.1** (`koali_control/__init__.py` and root README). The 4.0 Koali Spaces integration notes remain historical; the 4.1.1 pre-build workflow uses `uv sync --frozen --all-groups` and a DEBUG-gated path as described in [the root README](../README.md) and [development workflows](development-workflows.md).
 
 Koali Control Panel is a local development control surface. It prepares execution backends and workspaces, delegates repository-owned operations to kOA-Linux, supervises configured development products, and presents diagnostics delegated to LevelUpDiag-Koali. It does **not** replace repository contracts, invent subsystem admission, or own diagnostic verdict semantics.
 
